@@ -1,10 +1,12 @@
-import { Accents, Themes } from './enums';
+import { Accents, Themes } from './constants';
 
 export interface IFontSizeButtonProps extends React.HTMLAttributes<HTMLButtonElement> {}
 
 export interface INavBarProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
+  fontsize: number;
   change_theme: (theme: IThemeCombo) => void;
+  change_fontsize: (size: number) => void;
   progress: {
     max: number;
     value: number;
@@ -13,6 +15,7 @@ export interface INavBarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export interface IContentProps extends React.HTMLAttributes<HTMLDivElement> {
   lines: string[];
+  fontsize: number;
 }
 
 export interface IVsCodeMessage {

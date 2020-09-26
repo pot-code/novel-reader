@@ -29,12 +29,16 @@ import {
   IThemeCombo,
   IVsCodeMessage
 } from './types';
-import { Themes, Accents } from './enums';
+import {
+  Themes,
+  Accents,
+  MAX_FONTSIZE,
+  MIN_FONTSIZE,
+  TO_TOP_SCROLL_THRESHOLD,
+  VSCODE_MESSAGE_SOURCE
+} from './constants';
 
 import './app.scss';
-
-const VSCODE_MESSAGE_SOURCE = 'novel-reader';
-const TO_TOP_SCROLL_THRESHOLD = 128;
 
 function ColorPalette({ size = 24, palettes, on_select }: IColorPaletteProps) {
   const origin = size >> 1;
@@ -187,7 +191,7 @@ function ProgressBar({ max, value, fill }: IProgressBarProps) {
   );
 }
 
-function NavBar({ title, progress, change_theme }: INavBarProps) {
+function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: INavBarProps) {
   const [bg_visibility, set_bg_visibility] = useState(false);
   const fade_trigger_distance = useRef(0);
   const nav_ref = useRef<HTMLDivElement>(null);
@@ -226,6 +230,14 @@ function NavBar({ title, progress, change_theme }: INavBarProps) {
     change_theme(theme);
   }
 
+  function increase_fontsize() {
+    change_fontsize(fontsize + 1);
+  }
+
+  function decrease_fontsize() {
+    change_fontsize(fontsize - 1);
+  }
+
   return (
     <div styleName="nav" ref={nav_ref}>
       <div
@@ -253,7 +265,16 @@ function NavBar({ title, progress, change_theme }: INavBarProps) {
                   <IconButton Icon={PaletteIcon} fill={theme.accents} onClick={toggle} active={visible} />
                 )}
               </Popout>
-              <Popout content={<FontsizeIndicator value={16} fill={theme.accents} />}>
+              <Popout
+                content={
+                  <FontsizeIndicator
+                    value={fontsize}
+                    fill={theme.accents}
+                    on_add={increase_fontsize}
+                    on_minus={decrease_fontsize}
+                  />
+                }
+              >
                 {(toggle, visible) => (
                   <IconButton Icon={FontSizeIcon} fill={theme.accents} onClick={toggle} active={visible} />
                 )}
@@ -268,12 +289,17 @@ function NavBar({ title, progress, change_theme }: INavBarProps) {
   );
 }
 
-function Content({ lines }: IContentProps) {
+function Content({ lines, fontsize }: IContentProps) {
   const total = lines.length;
 
   return (
     <div styleName="content-container">
-      <div styleName="content">
+      <div
+        styleName="content"
+        style={{
+          fontSize: `${fontsize}px`
+        }}
+      >
         {lines.map((line, idx) => (
           <p key={idx} className="whitespace-pre-wrap break-all my-3">
             {line}
@@ -338,6 +364,7 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
 function Reader() {
   const [title, set_title] = useState<string>('');
   const [lines, set_lines] = useState<string[]>([]);
+  const [fontsize, set_fontsize] = useState(24);
   const [theme, set_theme] = useRootTheme({
     accents: Accents.PURPLE,
     theme: Themes.LIGHT
@@ -358,7 +385,20 @@ function Reader() {
     }
   }
 
+  // function init_fontsize() {
+  //   const style = window.getComputedStyle(document.documentElement);
+  //   const size = parseInt(style.fontSize, 10);
+  //   set_fontsize(size);
+  // }
+
+  function change_fontsize(new_size: number) {
+    new_size = Math.min(MAX_FONTSIZE, Math.max(MIN_FONTSIZE, new_size));
+    set_fontsize(new_size);
+  }
+
   useEffect(() => {
+    // init_fontsize();
+
     const vscode_api = acquireVsCodeApi();
     window.addEventListener('message', on_window_message);
     vscode_api.postMessage({});
@@ -373,9 +413,15 @@ function Reader() {
 
   return (
     <UIThemeContext.Provider value={theme}>
-      <Content lines={lines} />
+      <Content lines={lines} fontsize={fontsize} />
       {lines.length > 0 && <ScrollToTop threshold={TO_TOP_SCROLL_THRESHOLD} fill={theme.accents} />}
-      <NavBar title={title} progress={{ max: 10, value: 3 }} change_theme={set_theme} />
+      <NavBar
+        title={title}
+        fontsize={fontsize}
+        progress={{ max: 10, value: 3 }}
+        change_theme={set_theme}
+        change_fontsize={change_fontsize}
+      />
     </UIThemeContext.Provider>
   );
 }

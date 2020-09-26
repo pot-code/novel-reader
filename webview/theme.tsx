@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Accents, Themes } from './enums';
+import { Accents, Themes } from './constants';
 import { IThemeCombo } from './types';
 
 export const UIThemeContext = createContext({
