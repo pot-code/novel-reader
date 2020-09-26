@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useReducer } from 'react';
 import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
@@ -26,6 +26,7 @@ import {
   IPaletteItemProps,
   IPopoutProps,
   IProgressBarProps,
+  IReaderData,
   IThemeCombo,
   IVsCodeMessage
 } from './types';
@@ -35,7 +36,8 @@ import {
   MAX_FONTSIZE,
   MIN_FONTSIZE,
   TO_TOP_SCROLL_THRESHOLD,
-  VSCODE_MESSAGE_SOURCE
+  VSCODE_MESSAGE_SOURCE,
+  ReaderActions
 } from './constants';
 
 import './app.scss';
@@ -361,9 +363,23 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
   );
 }
 
+function reader_data_reducer(state: IReaderData, action: { type: string; payload: IVsCodeMessage }): IReaderData {
+  switch (action.type) {
+    case ReaderActions.DATA:
+      const { content: lines, index, total, title } = action.payload;
+      return { lines, index, total, title };
+    default:
+      throw new Error(`unsupported action type \'${action.type}\'`);
+  }
+}
+
 function Reader() {
-  const [title, set_title] = useState<string>('');
-  const [lines, set_lines] = useState<string[]>([]);
+  const [data, dispatch] = useReducer(reader_data_reducer, {
+    title: '',
+    lines: [],
+    index: -1,
+    total: -1
+  });
   const [fontsize, set_fontsize] = useState(24);
   const [theme, set_theme] = useRootTheme({
     accents: Accents.PURPLE,
@@ -372,24 +388,20 @@ function Reader() {
   const [redirect, set_redirect] = useState(false);
 
   function on_window_message(msg: MessageEvent) {
-    const data = msg.data;
+    const msg_data = msg.data;
 
-    if (data.source !== undefined && data.source === VSCODE_MESSAGE_SOURCE) {
-      const { content, title: _title } = data as IVsCodeMessage;
+    if (msg_data.source !== undefined && msg_data.source === VSCODE_MESSAGE_SOURCE) {
+      const { content } = msg_data as IVsCodeMessage;
       if (content.length === 0) {
         set_redirect(true);
       } else {
-        set_title(_title);
-        set_lines(content);
+        dispatch({
+          type: ReaderActions.DATA,
+          payload: msg_data
+        });
       }
     }
   }
-
-  // function init_fontsize() {
-  //   const style = window.getComputedStyle(document.documentElement);
-  //   const size = parseInt(style.fontSize, 10);
-  //   set_fontsize(size);
-  // }
 
   function change_fontsize(new_size: number) {
     new_size = Math.min(MAX_FONTSIZE, Math.max(MIN_FONTSIZE, new_size));
@@ -397,8 +409,6 @@ function Reader() {
   }
 
   useEffect(() => {
-    // init_fontsize();
-
     const vscode_api = acquireVsCodeApi();
     window.addEventListener('message', on_window_message);
     vscode_api.postMessage({});
@@ -413,10 +423,10 @@ function Reader() {
 
   return (
     <UIThemeContext.Provider value={theme}>
-      <Content lines={lines} fontsize={fontsize} />
-      {lines.length > 0 && <ScrollToTop threshold={TO_TOP_SCROLL_THRESHOLD} fill={theme.accents} />}
+      <Content lines={data.lines} fontsize={fontsize} />
+      {data.lines.length > 0 && <ScrollToTop threshold={TO_TOP_SCROLL_THRESHOLD} fill={theme.accents} />}
       <NavBar
-        title={title}
+        title={data.title}
         fontsize={fontsize}
         progress={{ max: 10, value: 3 }}
         change_theme={set_theme}

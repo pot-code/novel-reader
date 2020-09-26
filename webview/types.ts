@@ -26,6 +26,13 @@ export interface IVsCodeMessage {
   content: string[];
 }
 
+export interface IReaderData {
+  index: number;
+  total: number;
+  title: string;
+  lines: string[];
+}
+
 export interface IProgressBarProps {
   max: number;
   value: number;
