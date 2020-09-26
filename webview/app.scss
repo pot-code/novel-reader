@@ -86,6 +86,10 @@ body {
   &:active {
     @include mx.var-neumorphism-inset(--theme-primary, 8px);
   }
+  &.icon-button--disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+  }
   &:focus {
     outline: none;
   }

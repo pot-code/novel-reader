@@ -16,5 +16,7 @@ export const MIN_FONTSIZE = 14;
 export const MAX_FONTSIZE = 32;
 
 export enum ReaderActions {
-  DATA = 'data'
+  DATA = 'data',
+  PAGE = 'page',
+  INIT = 'init'
 }

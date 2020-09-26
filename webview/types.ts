@@ -7,6 +7,7 @@ export interface INavBarProps extends React.HTMLAttributes<HTMLDivElement> {
   fontsize: number;
   change_theme: (theme: IThemeCombo) => void;
   change_fontsize: (size: number) => void;
+  change_page: (page: number) => void;
   progress: {
     max: number;
     value: number;
@@ -20,10 +21,12 @@ export interface IContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export interface IVsCodeMessage {
   source: string;
-  index: number;
-  total: number;
-  title: string;
-  content: string[];
+  type: string;
+  payload: any;
+  // index: number;
+  // total: number;
+  // title: string;
+  // content: string[];
 }
 
 export interface IReaderData {

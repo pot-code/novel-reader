@@ -1,3 +1,6 @@
+import { ReaderActions, VSCODE_MESSAGE_SOURCE } from './constants';
+import { IVsCodeMessage } from './types';
+
 const data = [
   `
 第93章 年关
@@ -189,25 +192,40 @@ const data = [
 export default function serve() {
   window.acquireVsCodeApi = () => {
     const total = data.length;
-    let index = 0;
 
-    return {
-      postMessage(msg: any) {
-        const lines = data[index].split('\n').filter((line) => line.trim() !== '');
-        const title = lines[0];
-        const content = lines.slice(1);
-        window.postMessage(
-          {
-            source: 'novel-reader',
-            index,
+    function handle_page(page: number) {
+      const lines = data[page].split('\n').filter((line) => line.trim() !== '');
+      const title = lines[0];
+      const content = lines.slice(1);
+      window.postMessage(
+        {
+          source: VSCODE_MESSAGE_SOURCE,
+          type: ReaderActions.DATA,
+          payload: {
+            index: page,
             total,
             title,
-            // content:[],
             content
-          },
-          '*'
-        );
-        index = (index + 1) % total;
+          }
+        },
+        '*'
+      );
+    }
+
+    return {
+      postMessage(msg: IVsCodeMessage) {
+        const { type } = msg;
+        switch (type) {
+          case ReaderActions.INIT:
+            handle_page(0);
+            break;
+          case ReaderActions.PAGE:
+            const new_page = msg.payload;
+            handle_page(new_page);
+            break;
+          default:
+            throw Error(`unsupported message type '${type}'`);
+        }
       },
       getState() {},
       setState() {}

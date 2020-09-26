@@ -105,13 +105,15 @@ function FontsizeIndicator({
       <Btn>
         <AddIcon onClick={on_add} fill={fill} />
       </Btn>
-      <span
+      <p
+        className="text-center"
         style={{
-          color: fill
+          color: fill,
+          width: '2rem'
         }}
       >
         {value}
-      </span>
+      </p>
       <Btn>
         <MinusIcon onClick={on_minus} fill={fill} />
       </Btn>
@@ -124,6 +126,7 @@ function IconButton({ Icon, fill, active = false, disabled = false, onClick, ...
     <button
       className="rounded-full p-2"
       styleName={cx('icon-button', {
+        'icon-button--disabled': disabled,
         'icon-button--active': active
       })}
       onClick={disabled ? undefined : onClick}
@@ -193,7 +196,7 @@ function ProgressBar({ max, value, fill }: IProgressBarProps) {
   );
 }
 
-function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: INavBarProps) {
+function NavBar({ title, progress, change_theme, fontsize, change_fontsize, change_page }: INavBarProps) {
   const [bg_visibility, set_bg_visibility] = useState(false);
   const fade_trigger_distance = useRef(0);
   const nav_ref = useRef<HTMLDivElement>(null);
@@ -216,6 +219,8 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: IN
     background: combo.theme === Themes.LIGHT ? '#FFFFFF' : '#000000',
     theme: combo
   }));
+  const can_go_next = progress.value < progress.max;
+  const can_go_prev = progress.value > 1;
 
   useEffect(() => {
     if (nav_ref.current) {
@@ -238,6 +243,14 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: IN
 
   function decrease_fontsize() {
     change_fontsize(fontsize - 1);
+  }
+
+  function next_page() {
+    change_page(progress.value);
+  }
+
+  function prev_page() {
+    change_page(progress.value - 2);
   }
 
   return (
@@ -281,8 +294,8 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: IN
                   <IconButton Icon={FontSizeIcon} fill={theme.accents} onClick={toggle} active={visible} />
                 )}
               </Popout>
-              <IconButton Icon={ArrowLeftIcon} fill={theme.accents} />
-              <IconButton Icon={ArrowRightIcon} fill={theme.accents} />
+              <IconButton Icon={ArrowLeftIcon} fill={theme.accents} disabled={!can_go_prev} onClick={prev_page} />
+              <IconButton Icon={ArrowRightIcon} fill={theme.accents} disabled={!can_go_next} onClick={next_page} />
             </div>
           </div>
         )}
@@ -292,8 +305,6 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize }: IN
 }
 
 function Content({ lines, fontsize }: IContentProps) {
-  const total = lines.length;
-
   return (
     <div styleName="content-container">
       <div
@@ -363,13 +374,13 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
   );
 }
 
-function reader_data_reducer(state: IReaderData, action: { type: string; payload: IVsCodeMessage }): IReaderData {
+function reader_data_reducer(state: IReaderData, action: { type: string; payload: any }): IReaderData {
   switch (action.type) {
     case ReaderActions.DATA:
       const { content: lines, index, total, title } = action.payload;
       return { lines, index, total, title };
     default:
-      throw new Error(`unsupported action type \'${action.type}\'`);
+      throw new Error(`unsupported action type '${action.type}'`);
   }
 }
 
@@ -386,19 +397,27 @@ function Reader() {
     theme: Themes.LIGHT
   });
   const [redirect, set_redirect] = useState(false);
+  const vscode_api_ref = useRef(acquireVsCodeApi());
 
   function on_window_message(msg: MessageEvent) {
     const msg_data = msg.data;
 
     if (msg_data.source !== undefined && msg_data.source === VSCODE_MESSAGE_SOURCE) {
-      const { content } = msg_data as IVsCodeMessage;
-      if (content.length === 0) {
-        set_redirect(true);
-      } else {
-        dispatch({
-          type: ReaderActions.DATA,
-          payload: msg_data
-        });
+      const { type } = msg_data as IVsCodeMessage;
+      switch (type) {
+        case ReaderActions.DATA:
+          const { content } = msg_data.payload;
+          if (content.length === 0) {
+            set_redirect(true);
+          } else {
+            dispatch({
+              type: ReaderActions.DATA,
+              payload: msg_data.payload
+            });
+          }
+          break;
+        default:
+          throw Error(`unsupported message type '${type}'`);
       }
     }
   }
@@ -408,10 +427,21 @@ function Reader() {
     set_fontsize(new_size);
   }
 
+  function change_page(new_page: number) {
+    vscode_api_ref.current.postMessage({
+      source: VSCODE_MESSAGE_SOURCE,
+      type: ReaderActions.PAGE,
+      payload: new_page
+    });
+  }
+
   useEffect(() => {
-    const vscode_api = acquireVsCodeApi();
     window.addEventListener('message', on_window_message);
-    vscode_api.postMessage({});
+    vscode_api_ref.current.postMessage({
+      source: VSCODE_MESSAGE_SOURCE,
+      type: ReaderActions.INIT,
+      payload: null
+    });
     return () => {
       window.removeEventListener('message', on_window_message);
     };
@@ -428,9 +458,10 @@ function Reader() {
       <NavBar
         title={data.title}
         fontsize={fontsize}
-        progress={{ max: 10, value: 3 }}
+        progress={{ max: data.total, value: data.index + 1 }}
         change_theme={set_theme}
         change_fontsize={change_fontsize}
+        change_page={change_page}
       />
     </UIThemeContext.Provider>
   );
