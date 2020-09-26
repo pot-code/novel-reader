@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { THEME_LOCAL_ID } from './constants';
 import { IThemeCombo } from './types';
 
 export function useOutsideCheck<T extends HTMLElement>(callback: (outside: boolean) => void) {
@@ -19,8 +20,6 @@ export function useOutsideCheck<T extends HTMLElement>(callback: (outside: boole
   }, []);
   return ref;
 }
-
-const THEME_LOCAL_ID = 'novel-reader-theme';
 
 export function useRootTheme(initial: IThemeCombo): [IThemeCombo, React.Dispatch<React.SetStateAction<IThemeCombo>>] {
   const [theme, set_theme] = useState(initial);

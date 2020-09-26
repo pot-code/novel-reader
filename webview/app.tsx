@@ -384,7 +384,7 @@ function reader_data_reducer(state: IReaderData, action: { type: string; payload
   }
 }
 
-function Reader() {
+function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
   const [data, dispatch] = useReducer(reader_data_reducer, {
     title: '',
     lines: [],
@@ -397,7 +397,6 @@ function Reader() {
     theme: Themes.LIGHT
   });
   const [redirect, set_redirect] = useState(false);
-  const vscode_api_ref = useRef(acquireVsCodeApi());
 
   function on_window_message(msg: MessageEvent) {
     const msg_data = msg.data;
@@ -428,7 +427,7 @@ function Reader() {
   }
 
   function change_page(new_page: number) {
-    vscode_api_ref.current.postMessage({
+    vscode_api.postMessage({
       source: VSCODE_MESSAGE_SOURCE,
       type: ReaderActions.PAGE,
       payload: new_page
@@ -437,7 +436,7 @@ function Reader() {
 
   useEffect(() => {
     window.addEventListener('message', on_window_message);
-    vscode_api_ref.current.postMessage({
+    vscode_api.postMessage({
       source: VSCODE_MESSAGE_SOURCE,
       type: ReaderActions.INIT,
       payload: null
@@ -468,6 +467,8 @@ function Reader() {
 }
 
 function App() {
+  const vscode_api_ref = useRef(acquireVsCodeApi());
+
   return (
     <div styleName="app">
       <Router>
@@ -476,7 +477,7 @@ function App() {
             <NotFound />
           </Route>
           <Route path="/">
-            <Reader />
+            <Reader vscode_api={vscode_api_ref.current} />
           </Route>
         </Switch>
       </Router>

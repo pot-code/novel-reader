@@ -22,8 +22,10 @@ declare var process: {
   };
 };
 
-declare function acquireVsCodeApi(): {
+declare interface IVsCodeApiObject {
   postMessage: (msg: any) => void;
   setState: (newState: any) => void;
   getState: () => any;
-};
+}
+
+declare function acquireVsCodeApi(): IVsCodeApiObject;

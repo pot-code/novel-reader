@@ -70,7 +70,7 @@
     "vscode:prepublish": "yarn run compile",
     "webview:dev": "NODE_ENV=development node webpack/server.js",
     "webview:build": "NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
-    "webview:lint": "tslint -p tsconfig.webview.json",
+    "webview:lint": "tslint -p webview",
     "compile": "tsc -p ./ && NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
     "watch": "tsc -watch -p ./",
     "lint": "tslint -t codeFrame -p tsconfig.json",
