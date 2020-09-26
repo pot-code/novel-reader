@@ -102,11 +102,11 @@ function FontsizeIndicator({
 
   return (
     <div className="grid grid-flow-col gap-2 items-center" styleName="fontsize-indicator">
-      <Btn>
-        <AddIcon onClick={on_add} fill={fill} />
+      <Btn onClick={on_add}>
+        <AddIcon fill={fill} />
       </Btn>
       <p
-        className="text-center"
+        className="text-center select-none"
         style={{
           color: fill,
           width: '2rem'
@@ -114,8 +114,8 @@ function FontsizeIndicator({
       >
         {value}
       </p>
-      <Btn>
-        <MinusIcon onClick={on_minus} fill={fill} />
+      <Btn onClick={on_minus}>
+        <MinusIcon fill={fill} />
       </Btn>
     </div>
   );
