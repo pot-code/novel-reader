@@ -1,0 +1,168 @@
+{
+  "name": "novel-reader",
+  "displayName": "Novel Reader",
+  "description": "TODO",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.48.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:chapterTreeView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "chapterTreeView.refresh",
+        "title": "Refresh Tree",
+        "icon": "$(refresh)",
+        "category": "Novel"
+      },
+      {
+        "command": "chapterTreeView.webview",
+        "title": "Show Webview",
+        "category": "Novel"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "novel-reader",
+          "title": "Novel Reader",
+          "icon": "assets/sidebar.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "chapterTreeView",
+        "contents": "No chapter data detected."
+      }
+    ],
+    "views": {
+      "novel-reader": [
+        {
+          "id": "chapterTreeView",
+          "name": "Chapters"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "chapterTreeView.refresh",
+          "when": "view == chapterTreeView",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "chapterTreeView.refresh",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "webview:dev": "NODE_ENV=development node webpack/server.js",
+    "webview:build": "NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
+    "webview:lint": "tslint -p tsconfig.webview.json",
+    "compile": "tsc -p ./ && NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
+    "watch": "tsc -watch -p ./",
+    "lint": "tslint -t codeFrame -p tsconfig.json",
+    "pretest": "yarn run compile && yarn run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@hot-loader/react-dom": "^16.8.6",
+    "@svgr/webpack": "^5.4.0",
+    "@types/classnames": "^2.2.7",
+    "@types/glob": "^7.1.3",
+    "@types/lodash": "^4.14.161",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.27",
+    "@types/react": "^16.9.35",
+    "@types/react-css-modules": "^4.6.2",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/vscode": "^1.48.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-react-css-modules": "^5.2.6",
+    "boxen": "^4.2.0",
+    "chalk": "^4.1.0",
+    "classnames": "^2.2.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "commitizen": "^4.2.1",
+    "common-tags": "^1.8.0",
+    "css-loader": "^3.4.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "express": "^4.16.4",
+    "file-loader": "^6.0.0",
+    "framer-motion": "^2.7.4",
+    "glob": "^7.1.6",
+    "html-webpack-plugin": "^4.5.0",
+    "http-proxy-middleware": "^1.0.3",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "lodash": "^4.17.20",
+    "mini-css-extract-plugin": "^0.11.0",
+    "mini-svg-data-uri": "^1.1.3",
+    "mocha": "^8.1.3",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "portfinder": "^1.0.20",
+    "postcss": "^7.0.32",
+    "postcss-loader": "^4.0.1",
+    "postcss-preset-env": "^6.6.0",
+    "postcss-scss": "^2.1.1",
+    "prettier": "^2.0.5",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hot-loader": "^4.12.21",
+    "react-router-dom": "^5.2.0",
+    "sass": "^1.26.11",
+    "sass-loader": "^10.0.2",
+    "speed-measure-webpack-plugin": "^1.3.3",
+    "style-loader": "^1.1.2",
+    "table": "^6.0.3",
+    "tailwindcss": "^1.8.10",
+    "terser-webpack-plugin": "^4.2.2",
+    "ts-loader": "^8.0.4",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-loader": "^3.5.4",
+    "tslint-react": "^5.0.0",
+    "typescript": "^4.0.3",
+    "url-loader": "^4.1.0",
+    "vscode-test": "^1.4.0",
+    "webpack": "^4.44.2",
+    "webpack-bundle-analyzer": "^3.9.0",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-middleware": "^3.6.2",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-hot-middleware": "^2.24.4",
+    "webpack-merge": "^5.0.9",
+    "webpackbar": "^4.0.0"
+  },
+  "lint-staged": {
+    "*.{tsx, ts}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

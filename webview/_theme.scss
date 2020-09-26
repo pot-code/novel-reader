@@ -1,0 +1,27 @@
+$timing: 300ms;
+$progress-height: 0.6rem;
+$nav-margin-top: 2rem;
+
+$theme-light: (
+  // neumorphism
+  --theme-primary: #e3e6ed,
+  --theme-primary-shadow-light: #ffffff,
+  --theme-primary-shadow-dark: #aeb7cb,
+  --theme-primary-lighen: lighten(#e3e6ed, 13%),
+  --theme-primary-darken: lighten(#e3e6ed, 16%),
+  --theme-primary-active: darken(#e3e6ed, 4%),
+  // reader area
+  --theme-bg: #ebece5,
+  --theme-text: #898c78
+);
+
+$theme-dark: (
+  --theme-primary: #232323,
+  --theme-primary-shadow-light: #2c2c2c,
+  --theme-primary-shadow-dark: #191919,
+  --theme-primary-lighen: lighten(#232323, 13%),
+  --theme-primary-darken: lighten(#232323, 16%),
+  --theme-primary-active: lighten(#232323, 4%),
+  --theme-bg: #232323,
+  --theme-text: #9ea18c
+);

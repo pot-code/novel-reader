@@ -1,0 +1,26 @@
+{
+  "extends": ["tslint:recommended", "tslint-react"],
+  "rules": {
+    "variable-name": {
+      "options": ["allow-snake-case", "allow-leading-underscore", "allow-pascal-case"]
+    },
+    "no-empty": [true, "allow-empty-catch", "allow-empty-functions"],
+    "no-console": {
+      "severity": "warning"
+    },
+    "max-classes-per-file": {
+      "severity": "off"
+    },
+    "no-debugger": true,
+    "no-bitwise": false,
+    "arrow-return-shorthand": true,
+    "interface-name": [true, "always-prefix"],
+    "member-ordering": [
+      true,
+      {
+        "order": "fields-first"
+      }
+    ],
+    "jsx-boolean-value": false
+  }
+}

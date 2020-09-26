@@ -1,0 +1,75 @@
+@use './theme' as *;
+
+@mixin outer-shadow($light_shadow, $dark_shadow, $shadow_size) {
+  box-shadow: $shadow_size $shadow_size $shadow_size * 2 $dark_shadow,
+    (-$shadow_size) (-$shadow_size) $shadow_size * 2 $light_shadow;
+}
+
+@mixin inner-shadow($light_shadow, $dark_shadow, $shadow_size) {
+  box-shadow: inset $shadow_size $shadow_size $shadow_size * 2 $dark_shadow,
+    inset (-$shadow_size) (-$shadow_size) $shadow_size * 2 $light_shadow;
+}
+
+@mixin ridge-shadow($light_shadow, $dark_shadow, $shadow_size) {
+  box-shadow: $shadow_size $shadow_size $shadow_size * 2 $dark_shadow,
+    (-$shadow_size) (-$shadow_size) $shadow_size * 2 $light_shadow,
+    inset $shadow_size $shadow_size $shadow_size * 2 $dark_shadow,
+    inset (-$shadow_size) (-$shadow_size) $shadow_size * 2 $light_shadow;
+}
+
+@mixin neumorphism-flat($main_tone, $light_shadow, $dark_shadow, $shadow_size) {
+  background-color: $main_tone;
+  @include outer-shadow($light_shadow, $dark_shadow, $shadow_size);
+}
+
+@mixin neumorphism-inset($main_tone, $light_shadow, $dark_shadow, $shadow_size) {
+  background-color: $main_tone;
+  @include inner-shadow($light_shadow, $dark_shadow, $shadow_size);
+}
+
+@mixin neumorphism-ridge($main_tone, $light_shadow, $dark_shadow, $shadow_size) {
+  background-color: $main_tone;
+  @include ridge-shadow($light_shadow, $dark_shadow, $shadow_size);
+}
+
+@mixin neumorphism-raised($main_tone, $light_shadow, $dark_shadow, $shadow_size) {
+  background: linear-gradient(145deg, lighten($main_tone, 13%), darken($main_tone, 16%));
+  @include outer-shadow($light_shadow, $dark_shadow, $shadow_size);
+}
+
+// CSS variable compatiable
+@mixin var-neumorphism-flat($var_name, $shadow_size) {
+  background-color: var($var_name);
+  box-shadow: $shadow_size $shadow_size $shadow_size * 2 var(#{$var_name + '-shadow-dark'}),
+    (-$shadow_size) (-$shadow_size) $shadow_size * 2 var(#{$var_name + '-shadow-light'});
+}
+
+@mixin var-neumorphism-inset($var_name, $shadow_size) {
+  background-color: var($var_name);
+  box-shadow: inset $shadow_size $shadow_size $shadow_size * 2 var(#{$var_name + '-shadow-dark'}),
+    inset (-$shadow_size) (-$shadow_size) $shadow_size * 2 var(#{$var_name + '-shadow-light'});
+}
+
+@mixin var-neumorphism-ridge($var_name, $shadow_size) {
+  background-color: var($var_name);
+  box-shadow: $shadow_size $shadow_size $shadow_size * 2 var(#{$var_name + '-shadow-dark'}),
+    (-$shadow_size) (-$shadow_size) $shadow_size * 2 var(#{$var_name + '-shadow-light'}),
+    inset $shadow_size $shadow_size $shadow_size * 2 var(#{$var_name + '-shadow-dark'}),
+    inset (-$shadow_size) (-$shadow_size) $shadow_size * 2 var(#{$var_name + '-shadow-light'});
+}
+
+@mixin var-neumorphism-raised($var_name, $shadow_size) {
+  background: linear-gradient(145deg, var(#{$var_name + '-lighten'}), var(#{$var_name + '-darken'}));
+  box-shadow: $shadow_size $shadow_size $shadow_size * 2 var(#{$var_name + '-shadow-dark'}),
+    (-$shadow_size) (-$shadow_size) $shadow_size * 2 var(#{$var_name + '-shadow-light'});
+}
+
+@mixin themify($theme) {
+  @each $name, $val in $theme {
+    #{$name}: $val;
+  }
+}
+
+@mixin transition-color() {
+  transition: color $timing ease, background-color $timing ease;
+}

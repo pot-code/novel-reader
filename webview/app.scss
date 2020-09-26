@@ -1,0 +1,134 @@
+@use './mixin' as mx;
+@use './theme' as *;
+
+:global {
+  :root[data-theme='light'] {
+    @include mx.themify($theme-light);
+  }
+  :root[data-theme='dark'] {
+    @include mx.themify($theme-dark);
+  }
+}
+
+// override vscode style
+html {
+  font-size: 16px;
+}
+
+// override vscode style
+body {
+  background-color: var(--theme-bg);
+  padding: 0;
+  @include mx.transition-color();
+}
+
+.app {
+  font-family: 'PingFang SC', 'tahoma', 'Microsoft Yahei', 'helvetica', 'sans-serif';
+}
+
+.nav {
+  position: fixed;
+  left: 2rem;
+  right: 2rem;
+  top: 0;
+  margin: $nav-margin-top 0;
+
+  .title {
+    font-size: 1.5rem;
+  }
+  .nav-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 1.5rem;
+    background-color: var(--theme-primary);
+    @include mx.transition-color();
+  }
+}
+
+.content-container {
+  position: relative;
+  top: 8rem;
+  margin-bottom: $nav-margin-top;
+
+  .content {
+    margin: 0 4rem;
+    color: var(--theme-text);
+    font-size: 1.5rem;
+    position: relative;
+  }
+
+  // p {
+  //   text-indent: 2em;
+  // }
+}
+
+.progress {
+  position: relative;
+  .track {
+    height: $progress-height;
+    @include mx.var-neumorphism-ridge(--theme-primary, 4px);
+  }
+  .bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: $progress-height;
+  }
+}
+
+.icon-button {
+  @include mx.var-neumorphism-flat(--theme-primary, 8px);
+
+  &.icon-button--active,
+  &:active {
+    @include mx.var-neumorphism-inset(--theme-primary, 8px);
+  }
+  &:focus {
+    outline: none;
+  }
+}
+
+.to-top-button {
+  bottom: 2rem;
+  right: 4rem;
+  padding: 1rem;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.popout {
+  position: absolute;
+  left: 50%;
+  margin: auto;
+  padding: 0.5rem;
+  background-color: rgba(105, 105, 105, 0.4);
+  border-radius: 0.5rem;
+
+  // popout triangle
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    top: -0.5rem;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0.5rem 0.5rem 0.5rem;
+    border-color: transparent transparent rgba(105, 105, 105, 0.4) transparent;
+  }
+}
+
+.fontsize-indicator {
+  .btn {
+    background-color: var(--theme-primary);
+    &:active {
+      background-color: var(--theme-primary-active);
+    }
+  }
+}
