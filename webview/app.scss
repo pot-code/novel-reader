@@ -76,6 +76,7 @@ body {
     top: 0;
     left: 0;
     height: $progress-height;
+    @include mx.transition-size();
   }
 }
 

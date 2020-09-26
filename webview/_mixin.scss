@@ -70,6 +70,16 @@
   }
 }
 
+@mixin transition($property, $_timing: $timing) {
+  transition-property: $property;
+  transition-duration: $_timing;
+  transition-timing-function: ease;
+}
+
 @mixin transition-color() {
-  transition: color $timing ease, background-color $timing ease;
+  @include transition((color, background-color, opacity));
+}
+
+@mixin transition-size() {
+  @include transition((width, height));
 }
