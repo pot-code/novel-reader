@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
   [
     // commands
     vscode.window.registerTreeDataProvider('chapterTreeView', chapter_tree),
-    vscode.commands.registerCommand('chapterTreeView.jumpTo', (chapter) => {
+    vscode.commands.registerCommand('chapterTreeView.jumpTo', (chapter: Chapter) => {
       chapter_tree.jump_to(chapter);
     }),
     vscode.commands.registerCommand('chapterTreeView.refresh', () => {
@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (editor) {
         chapter_tree.build_tree();
       }
-    }),
+    })
   ].forEach((disposable) => {
     context.subscriptions.push(disposable);
   });

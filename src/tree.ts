@@ -4,33 +4,27 @@ import * as os from 'os';
 const EXTRACT_CHAPTER_REGEXP = /^第([一二三四五零六七八九十百千万]+|\d+)[章回]|^番外/;
 
 export class Chapter extends vscode.TreeItem {
-  public pos: vscode.Position; // position of title
+  public range: vscode.Range; // position of title
   public title: string;
 
   // onclick
   command = {
     command: 'chapterTreeView.jumpTo',
     title: 'Jump To',
-    arguments: [this],
+    arguments: [this]
   };
   // iconPath = new vscode.ThemeIcon('archive');
+  private _editor: vscode.TextEditor;
 
-  private _title_range: vscode.Range | null;
-
-  constructor(pos: vscode.Position, title: string) {
+  constructor(range: vscode.Range, title: string, editor: vscode.TextEditor) {
     super(title, vscode.TreeItemCollapsibleState.None);
-    this.pos = pos;
+    this.range = range;
     this.title = title;
-    this._title_range = null;
+    this._editor = editor;
   }
 
-  title_range() {
-    if (this._title_range === null) {
-      const start = this.pos;
-      const end = new vscode.Position(start.line + 1, 0);
-      this._title_range = new vscode.Range(start, end);
-    }
-    return this._title_range;
+  get_content() {
+    return this._editor.document.getText(this.range);
   }
 }
 
@@ -41,10 +35,21 @@ export class Chapter extends vscode.TreeItem {
 function extract_chapters(editor: vscode.TextEditor): Chapter[] {
   const full_text = editor.document.getText();
   const lines = full_text.split(os.EOL);
+
+  // dummy data
+  lines.push('第一章');
+
+  let start = -1;
+  let title = '';
   return lines.reduce((acc, line, idx) => {
     if (EXTRACT_CHAPTER_REGEXP.test(line)) {
-      const pos = new vscode.Position(idx + 1, 0);
-      acc.push(new Chapter(pos, line.trim()));
+      if (title !== '') {
+        const start_pos = new vscode.Position(start, 0);
+        const end_pos = new vscode.Position(idx, 0);
+        acc.push(new Chapter(new vscode.Range(start_pos, end_pos), title, editor));
+      }
+      start = idx + 1;
+      title = line.trim();
     }
     return acc;
   }, [] as Chapter[]);
@@ -99,6 +104,6 @@ export class ChaterDataProvider implements vscode.TreeDataProvider<Chapter> {
 
   jump_to(chapter: Chapter) {
     const editor = vscode.window.activeTextEditor;
-    editor?.revealRange(chapter.title_range(), vscode.TextEditorRevealType.AtTop);
+    editor?.revealRange(chapter.range, vscode.TextEditorRevealType.AtTop);
   }
 }
