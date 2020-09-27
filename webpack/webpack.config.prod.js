@@ -1,12 +1,14 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const svgToMiniDataURI = require('mini-svg-data-uri');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { merge } = require('webpack-merge');
 
 const { baseConfig, styleLoader } = require('./webpack.config');
-const { buildPath } = require('./path');
+const { buildPath, publicPath } = require('./path');
 
 styleLoader[0].use.unshift({
   loader: MiniCssExtractPlugin.loader
@@ -23,7 +25,13 @@ module.exports = merge(baseConfig, {
     new MiniCssExtractPlugin({
       filename: 'main.css'
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new ManifestPlugin({
+      publicPath
+    }),
+    new CopyPlugin({
+      patterns: [{ from: 'template.ejs', to: '' }] // copy raw ejs into assets, will be manually parsed in extension
+    })
   ],
   module: {
     rules: [

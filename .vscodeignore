@@ -13,3 +13,5 @@ webview
 webpack
 .babelrc
 postcss.config.js
+template.ejs
+shared
