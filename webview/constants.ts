@@ -15,9 +15,3 @@ export const THEME_LOCAL_ID = 'novel-reader-theme';
 export const TO_TOP_SCROLL_THRESHOLD = 128;
 export const MIN_FONTSIZE = 14;
 export const MAX_FONTSIZE = 32;
-
-export enum ReaderActions {
-  DATA = 'data',
-  PAGE = 'page',
-  INIT = 'init'
-}

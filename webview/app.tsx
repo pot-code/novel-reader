@@ -36,11 +36,15 @@ import {
   MAX_FONTSIZE,
   MIN_FONTSIZE,
   TO_TOP_SCROLL_THRESHOLD,
-  VSCODE_MESSAGE_SOURCE,
-  ReaderActions
+  VSCODE_MESSAGE_SOURCE
 } from './constants';
+import { VsCodeResponseType, ReaderRequestType } from '@shared/constants';
 
 import './app.scss';
+
+enum ReaderActions {
+  DATA = 'data'
+}
 
 function ColorPalette({ size = 24, palettes, on_select }: IColorPaletteProps) {
   const origin = size >> 1;
@@ -414,7 +418,7 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
     if (msg_data.source !== undefined && msg_data.source === VSCODE_MESSAGE_SOURCE) {
       const { type } = msg_data as IVsCodeMessage;
       switch (type) {
-        case ReaderActions.DATA:
+        case VsCodeResponseType.DATA:
           const { content } = msg_data.payload;
           if (content.length === 0) {
             set_redirect(true);
@@ -439,16 +443,17 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
   function change_page(new_page: number) {
     vscode_api.postMessage({
       source: VSCODE_MESSAGE_SOURCE,
-      type: ReaderActions.PAGE,
+      type: ReaderRequestType.PAGE,
       payload: new_page
     });
   }
 
   useEffect(() => {
     window.addEventListener('message', on_window_message);
+    // get initial data
     vscode_api.postMessage({
       source: VSCODE_MESSAGE_SOURCE,
-      type: ReaderActions.INIT,
+      type: ReaderRequestType.INIT,
       payload: null
     });
     return () => {

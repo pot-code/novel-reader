@@ -1,4 +1,5 @@
-import { ReaderActions, VSCODE_MESSAGE_SOURCE } from './constants';
+import { VSCODE_MESSAGE_SOURCE } from './constants';
+import { ReaderRequestType, VsCodeResponseType } from '@shared/constants';
 import { IVsCodeMessage } from './types';
 
 const data = [
@@ -200,7 +201,7 @@ export default function serve() {
       window.postMessage(
         {
           source: VSCODE_MESSAGE_SOURCE,
-          type: ReaderActions.DATA,
+          type: VsCodeResponseType.DATA,
           payload: {
             index: page,
             total,
@@ -216,10 +217,10 @@ export default function serve() {
       postMessage(msg: IVsCodeMessage) {
         const { type } = msg;
         switch (type) {
-          case ReaderActions.INIT:
+          case ReaderRequestType.INIT:
             handle_page(0);
             break;
-          case ReaderActions.PAGE:
+          case ReaderRequestType.PAGE:
             const new_page = msg.payload;
             handle_page(new_page);
             break;

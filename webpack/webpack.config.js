@@ -41,7 +41,11 @@ exports.styleLoader = [
 exports.baseConfig = {
   entry: path.resolve(srcPath, 'index.tsx'),
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.json']
+    extensions: ['.js', '.ts', '.tsx', '.json'],
+    alias: {
+      // sync with tsconfig
+      '@shared': path.resolve(rootPath, 'shared')
+    }
   },
   module: {
     rules: [

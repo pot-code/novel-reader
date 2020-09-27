@@ -6,11 +6,18 @@
 		"lib": [
 			"ES6"
 		],
+		"baseUrl": "./",
+		"paths": {
+			"@shared/*": [
+				"shared/*"
+			]
+		},
 		"sourceMap": true,
-		"rootDir": "src",
+		"rootDir": ".",
 		"strict": true /* enable all strict type-checking options */
 	},
 	"include": [
-		"src/**/*"
+		"src/**/*",
+		"shared/**/*"
 	]
 }
