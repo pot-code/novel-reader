@@ -143,6 +143,7 @@ function Popout({ gap = 8, children, style = {}, content }: IPopoutProps) {
   };
   const container_ref = useOutsideCheck<HTMLDivElement>(outside_check);
   const [visible, set_visible] = useState(false);
+  const triangle_height_ref = useRef('0px');
   const combined_styles = Object.assign(default_style, style);
 
   function toggle_visible() {
@@ -155,6 +156,16 @@ function Popout({ gap = 8, children, style = {}, content }: IPopoutProps) {
     }
   }
 
+  function init_triangle_height() {
+    triangle_height_ref.current = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue('--popout-triangle-height');
+  }
+
+  useEffect(() => {
+    init_triangle_height();
+  }, []);
+
   return (
     <div ref={container_ref} style={combined_styles}>
       {children(toggle_visible, visible)}
@@ -166,8 +177,7 @@ function Popout({ gap = 8, children, style = {}, content }: IPopoutProps) {
               y: 8,
               opacity: 0,
               x: '-50%',
-              // sync with popout triangle height
-              top: `calc(100% + 0.5rem + ${gap}px)`
+              top: `calc(100% + ${triangle_height_ref.current} + ${gap}px)`
             }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -2,6 +2,9 @@
 @use './theme' as *;
 
 :global {
+  :root {
+    --popout-triangle-height: 0.5rem;
+  }
   :root[data-theme='light'] {
     @include mx.themify($theme-light);
   }
@@ -120,11 +123,11 @@ body {
     position: absolute;
     left: 50%;
     transform: translate(-50%);
-    top: -0.5rem;
+    top: calc(var(--popout-triangle-height) * -1);
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 0.5rem 0.5rem 0.5rem;
+    border-width: 0 var(--popout-triangle-height) var(--popout-triangle-height) var(--popout-triangle-height);
     border-color: transparent transparent rgba(105, 105, 105, 0.4) transparent;
   }
 }
