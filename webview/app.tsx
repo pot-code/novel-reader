@@ -211,16 +211,16 @@ function ProgressBar({ max, value, fill }: IProgressBarProps) {
 }
 
 function NavBar({ title, progress, change_theme, fontsize, change_fontsize, change_page }: INavBarProps) {
-  const [bg_visibility, set_bg_visibility] = useState(false);
+  const [bg_visible, set_bg_visible] = useState(false);
   const fade_trigger_distance = useRef(0);
   const nav_ref = useRef<HTMLDivElement>(null);
   const toggle_visibility = throttle(
     () => {
       const scroll_top = document.documentElement.scrollTop;
       if (scroll_top >= fade_trigger_distance.current) {
-        set_bg_visibility(true);
+        set_bg_visible(true);
       } else {
-        set_bg_visibility(false);
+        set_bg_visible(false);
       }
     },
     100,
@@ -268,10 +268,13 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
   }
 
   return (
-    <div styleName="nav" ref={nav_ref}>
-      <div
+    <nav styleName="nav" ref={nav_ref}>
+      <motion.div
         styleName="nav-bg"
-        className={cx('transition-opacity duration-300', bg_visibility ? 'opacity-100' : 'opacity-0')}
+        animate={{
+          y: bg_visible ? 0 : -24
+        }}
+        className={cx('transition-opacity duration-300', bg_visible ? 'opacity-100' : 'opacity-0')}
       />
       <UIThemeContext.Consumer>
         {(theme) => (
@@ -280,7 +283,7 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
               styleName="title"
               className="transition-colors duration-300"
               style={{
-                color: bg_visibility ? theme.accents : '#898c78'
+                color: bg_visible ? theme.accents : '#898c78'
               }}
             >
               {title}
@@ -314,7 +317,7 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
           </div>
         )}
       </UIThemeContext.Consumer>
-    </div>
+    </nav>
   );
 }
 
