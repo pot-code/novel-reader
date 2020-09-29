@@ -31,11 +31,10 @@ function parse_webpack_manifest(manifest_path: string): IHTMLAssets {
   const scripts: string[] = [];
   if (manifest_obj !== null) {
     Object.keys(manifest_obj).forEach((entry) => {
+      const local_path = manifest_obj![entry];
       if (/\.css$/.test(entry)) {
-        const local_path = manifest_obj![entry];
         styles.push(local_path);
       } else if (/\.js$/.test(entry)) {
-        const local_path = manifest_obj![entry];
         scripts.push(local_path);
       }
     });

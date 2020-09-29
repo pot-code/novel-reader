@@ -330,6 +330,10 @@ function Content({ lines, fontsize }: IContentProps) {
   );
 }
 
+function scroll_to_top() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
   const [visible, set_visible] = useState<boolean>(false);
 
@@ -356,10 +360,6 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
     }
   );
 
-  function to_top() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
   useEffect(() => {
     window.addEventListener('scroll', on_window_scroll);
     return () => {
@@ -374,7 +374,7 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
         visible ? 'opacity-100' : 'opacity-0'
       )}
       styleName="to-top-button"
-      onClick={visible ? to_top : undefined}
+      onClick={visible ? scroll_to_top : undefined}
     >
       <ArrowUpIcon fill={fill} height="24" width="24" />
     </button>
@@ -452,6 +452,10 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
       window.removeEventListener('message', on_window_message);
     };
   }, []);
+
+  useEffect(() => {
+    scroll_to_top();
+  }, [data]);
 
   if (redirect) {
     return <Redirect to="/404" />;

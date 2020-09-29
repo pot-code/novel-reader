@@ -9,9 +9,7 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
-webview
 webpack
 .babelrc
 postcss.config.js
 template.ejs
-shared
