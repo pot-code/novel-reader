@@ -1,5 +1,3 @@
-import * as vscode from 'vscode';
-
 import { IChapterTree, INovelWebview } from './types';
 import { Chapter } from './Chapter';
 
@@ -20,10 +18,20 @@ export default class WebviewToTreeBride {
   }
 
   fetch_init_data() {
-    this._tree?.push_current_state();
+    if (this._tree !== null) {
+      const [chapter, total] = this._tree.get_current_state();
+      if (chapter !== null) {
+        this._webview?.receive_chapter(chapter, total);
+      }
+    }
   }
 
   fetch_page_data(index: number) {
-    this._tree?.push_next_state(index);
+    if (this._tree !== null) {
+      const [chapter, total] = this._tree.get_next_state(index);
+      if (chapter !== null) {
+        this._webview?.receive_chapter(chapter, total);
+      }
+    }
   }
 }

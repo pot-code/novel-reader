@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { Chapter } from './Chapter';
 
 export interface IChapterTree<T> extends vscode.TreeDataProvider<T> {
-  push_current_state(): void;
-  push_next_state(index: number): void;
+  get_current_state(): [Chapter | null, number];
+  get_next_state(index: number): [Chapter | null, number];
 }
 
 export interface INovelWebview {

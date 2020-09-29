@@ -92,30 +92,30 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
 
     this._selected = chapter;
     editor?.revealRange(chapter.range, vscode.TextEditorRevealType.AtTop);
-    this.push_current_state();
+    this.get_current_state();
   }
 
   reset() {
     this._invalidate_cache();
   }
 
-  push_current_state() {
-    const bridge = this._bridge;
+  get_current_state(): [Chapter | null, number] {
     if (this._selected !== null) {
-      bridge.push_chapter(this._selected, this._total);
+      return [this._selected, this._total];
     } else if (this._items !== null) {
       const fallback = this._items[0];
-      bridge.push_chapter(fallback, this._total);
+      return [fallback, this._total];
     }
+    return [null, -1];
   }
 
-  push_next_state(index: number) {
-    const bridge = this._bridge;
+  get_next_state(index: number): [Chapter | null, number] {
     if (this._items !== null) {
       const chapter = this._items[index];
-      bridge.push_chapter(chapter, this._total);
       this._selected = chapter;
+      return [chapter, this._total];
     }
+    return [null, -1];
   }
 
   private _invalidate_cache() {
