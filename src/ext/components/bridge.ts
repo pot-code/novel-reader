@@ -7,7 +7,7 @@ export default class WebviewToTreeBride {
   private _webview: INovelWebview | null = null;
   private _tree: IChapterTree<Chapter> | null = null;
 
-  set_webview(webview: vscode.Webview) {
+  set_webview(webview: INovelWebview | null) {
     this._webview = webview;
   }
 
@@ -15,5 +15,15 @@ export default class WebviewToTreeBride {
     this._tree = tree;
   }
 
-  push_chapter(chaper: Chapter) {}
+  push_chapter(chaper: Chapter, total: number) {
+    this._webview?.receive_chapter(chaper, total);
+  }
+
+  fetch_init_data() {
+    this._tree?.push_current_state();
+  }
+
+  fetch_page_data(index: number) {
+    this._tree?.push_next_state(index);
+  }
 }

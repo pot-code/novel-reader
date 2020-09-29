@@ -27,18 +27,10 @@ import {
   IPopoutProps,
   IProgressBarProps,
   IReaderData,
-  IThemeCombo,
-  IVsCodeMessage
+  IThemeCombo
 } from './types';
-import {
-  Themes,
-  Accents,
-  MAX_FONTSIZE,
-  MIN_FONTSIZE,
-  TO_TOP_SCROLL_THRESHOLD,
-  VSCODE_MESSAGE_SOURCE
-} from './constants';
-import { VsCodeResponseType, ReaderRequestType } from './shared';
+import { Themes, Accents, MAX_FONTSIZE, MIN_FONTSIZE, TO_TOP_SCROLL_THRESHOLD } from './constants';
+import { VsCodeResponseType, ReaderRequestType, IVsCodeMessage, VSCODE_MESSAGE_SOURCE } from './shared';
 
 import './app.scss';
 
@@ -196,11 +188,9 @@ function Popout({ gap = 8, children, style = {}, content }: IPopoutProps) {
 
 function ProgressBar({ max, value, fill }: IProgressBarProps) {
   return (
-    <div styleName="progress">
-      <div styleName="track" className="rounded-full" />
+    <div styleName="progress" className="overflow-hidden">
       <div
         styleName="bar"
-        className="rounded-full"
         style={{
           backgroundColor: fill,
           width: `${(value / max) * 100}%`
@@ -380,7 +370,7 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
   return (
     <button
       className={cx(
-        'rounded-full border-2 border-gray-400 hover:border-gray-600 transition duration-300 fixed',
+        'rounded-full border-2 border-gray-300 hover:border-gray-500 transition duration-300 fixed',
         visible ? 'opacity-100' : 'opacity-0'
       )}
       styleName="to-top-button"
@@ -394,8 +384,7 @@ function ScrollToTop({ threshold, fill }: { threshold: number; fill: string }) {
 function reader_data_reducer(state: IReaderData, action: { type: string; payload: any }): IReaderData {
   switch (action.type) {
     case ReaderActions.DATA:
-      const { content: lines, index, total, title } = action.payload;
-      return { lines, index, total, title };
+      return action.payload;
     default:
       throw new Error(`unsupported action type '${action.type}'`);
   }
@@ -422,8 +411,8 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
       const { type } = msg_data as IVsCodeMessage;
       switch (type) {
         case VsCodeResponseType.DATA:
-          const { content } = msg_data.payload;
-          if (content.length === 0) {
+          const { lines } = msg_data.payload;
+          if (lines.length === 0) {
             set_redirect(true);
           } else {
             dispatch({

@@ -19,16 +19,6 @@ export interface IContentProps extends React.HTMLAttributes<HTMLDivElement> {
   fontsize: number;
 }
 
-export interface IVsCodeMessage {
-  source: string;
-  type: string;
-  payload: any;
-  // index: number;
-  // total: number;
-  // title: string;
-  // content: string[];
-}
-
 export interface IReaderData {
   index: number;
   total: number;

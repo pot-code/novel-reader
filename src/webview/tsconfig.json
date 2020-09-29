@@ -6,6 +6,7 @@
 		"jsx": "preserve",
 		"rootDir": "./",
 		"baseUrl": "../",
+		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"lib": [
 			"dom",

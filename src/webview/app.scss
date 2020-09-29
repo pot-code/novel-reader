@@ -70,10 +70,10 @@ body {
 
 .progress {
   position: relative;
-  .track {
-    height: $progress-height;
-    @include mx.var-neumorphism-ridge(--theme-primary, 4px);
-  }
+  border-radius: $progress-height / 2;
+  height: $progress-height;
+  @include mx.var-neumorphism-ridge(--theme-primary, 4px);
+  
   .bar {
     position: absolute;
     top: 0;
@@ -102,7 +102,7 @@ body {
 .to-top-button {
   bottom: 2rem;
   right: 4rem;
-  padding: 1rem;
+  padding: .5rem;
 
   &:focus {
     outline: none;

@@ -2,20 +2,9 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import { Chapter } from './Chapter';
 import { IChapterTree } from './types';
+import WebviewToTreeBride from './bridge';
 
 const EXTRACT_CHAPTER_REGEXP = /^第([一二三四五零六七八九十百千万]+|\d+)[章回]|^番外/;
-
-class NovelMetaInfo {
-  public name: string;
-  public cursor: number;
-  public total: number;
-
-  constructor(name: string, cursor: number, total: number) {
-    this.name = name;
-    this.cursor = cursor;
-    this.total = total;
-  }
-}
 
 /**
  * extract chapter data from given editor
@@ -50,12 +39,18 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
   onDidChangeTreeData: vscode.Event<Chapter | null>;
 
   private _change_event: vscode.EventEmitter<Chapter | null> = new vscode.EventEmitter<Chapter | null>();
+  private _bridge: WebviewToTreeBride;
   private _view_cache: Map<vscode.Uri, Chapter[]>;
-  private _meta_info: NovelMetaInfo | null = null;
+  private _selected: Chapter | null = null;
+  private _total: number = -1;
+  private _items: Chapter[] | null = null;
 
-  constructor(view_cache: Map<vscode.Uri, Chapter[]>) {
+  constructor(view_cache: Map<vscode.Uri, Chapter[]>, bridge: WebviewToTreeBride) {
     this.onDidChangeTreeData = this._change_event.event;
     this._view_cache = view_cache;
+    this._bridge = bridge;
+
+    bridge.set_tree(this);
   }
 
   getChildren(elem: Chapter): Thenable<Chapter[]> {
@@ -64,29 +59,27 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
       return Promise.resolve([]);
     }
 
+    // get from cache
     const cache = this._view_cache;
     const uri = editor.document.uri;
     if (cache.has(uri)) {
-      return Promise.resolve(cache.get(uri)!);
+      this._items = cache.get(uri)!;
+      this._selected = null;
+      this._total = this._items.length;
+      return Promise.resolve(this._items);
     }
 
     // re-calculate
     const items = extract_chapters(editor);
     cache.set(uri, items);
+    this._total = items.length;
+    this._items = items;
+    this._selected = null;
     return Promise.resolve(items);
   }
 
   getTreeItem(elem: Chapter): vscode.TreeItem {
     return elem;
-  }
-
-  invalidate_cache() {
-    const cache = this._view_cache;
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-      const uri = editor.document.uri;
-      cache.delete(uri);
-    }
   }
 
   build_tree() {
@@ -96,10 +89,41 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
 
   jump_to(chapter: Chapter) {
     const editor = vscode.window.activeTextEditor;
+
+    this._selected = chapter;
     editor?.revealRange(chapter.range, vscode.TextEditorRevealType.AtTop);
+    this.push_current_state();
   }
 
-  private _fill_meta_info(editor: vscode.TextEditor, cursor: number, total: number) {
-    this._meta_info = new NovelMetaInfo('', cursor, total);
+  reset() {
+    this._invalidate_cache();
+  }
+
+  push_current_state() {
+    const bridge = this._bridge;
+    if (this._selected !== null) {
+      bridge.push_chapter(this._selected, this._total);
+    } else if (this._items !== null) {
+      const fallback = this._items[0];
+      bridge.push_chapter(fallback, this._total);
+    }
+  }
+
+  push_next_state(index: number) {
+    const bridge = this._bridge;
+    if (this._items !== null) {
+      const chapter = this._items[index];
+      bridge.push_chapter(chapter, this._total);
+      this._selected = chapter;
+    }
+  }
+
+  private _invalidate_cache() {
+    const cache = this._view_cache;
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      const uri = editor.document.uri;
+      cache.delete(uri);
+    }
   }
 }

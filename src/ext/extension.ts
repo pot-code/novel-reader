@@ -3,11 +3,13 @@ import * as vscode from 'vscode';
 import { ChaterDataProvider } from './components/tree';
 import { Chapter } from './components/Chapter';
 import webview from './components/webview';
+import WebviewToTreeBride from './components/bridge';
 
 // this method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
   const view_cache = new Map<vscode.Uri, Chapter[]>(); // store the calculated chapter list
-  const chapter_tree = new ChaterDataProvider(view_cache);
+  const bridge = new WebviewToTreeBride();
+  const chapter_tree = new ChaterDataProvider(view_cache, bridge);
 
   [
     // commands
@@ -16,11 +18,11 @@ export function activate(context: vscode.ExtensionContext) {
       chapter_tree.jump_to(chapter);
     }),
     vscode.commands.registerCommand('chapterTreeView.refresh', () => {
-      chapter_tree.invalidate_cache();
+      chapter_tree.reset();
       chapter_tree.build_tree();
     }),
     vscode.commands.registerCommand('chapterTreeView.webview', () => {
-      webview(context);
+      webview(context, bridge);
     }),
 
     // events

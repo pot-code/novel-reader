@@ -1,6 +1,4 @@
-import { VSCODE_MESSAGE_SOURCE } from './constants';
-import { ReaderRequestType, VsCodeResponseType } from './shared';
-import { IVsCodeMessage } from './types';
+import { IVsCodeMessage, ReaderRequestType, VsCodeResponseType, VSCODE_MESSAGE_SOURCE } from './shared';
 
 const data = [
   `
@@ -206,7 +204,7 @@ export default function serve() {
             index: page,
             total,
             title,
-            content
+            lines: content
           }
         },
         '*'

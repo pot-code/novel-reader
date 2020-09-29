@@ -2,15 +2,22 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as ejs from 'ejs';
 import * as fs from 'fs';
+import { EOL } from 'os';
 
 import { INovelWebview } from './types';
-import { ReaderRequestType } from './shared';
+import { ReaderRequestType, IVsCodeMessage, VSCODE_MESSAGE_SOURCE, VsCodeResponseType } from './shared';
+import { Chapter } from './Chapter';
+import WebviewToTreeBride from './bridge';
 
 interface IHTMLAssets {
   styles: string[];
   scripts: string[];
 }
 
+/**
+ * parse manifest.json and return assets info
+ * @param manifest_path manifest.json path in build directory
+ */
 function parse_webpack_manifest(manifest_path: string): IHTMLAssets {
   let manifest_obj: { [key: string]: string } | null = null;
   try {
@@ -36,13 +43,26 @@ function parse_webpack_manifest(manifest_path: string): IHTMLAssets {
   return { styles, scripts };
 }
 
+/**
+ * get the vscode URI from local file regarding the given webview panel
+ * @param ctx vscode context
+ * @param panel webview panel to use
+ * @param segments resource path segments
+ */
+function get_webview_uri(ctx: vscode.ExtensionContext, panel: vscode.WebviewPanel, segments: string[]): vscode.Uri {
+  const ctx_path = path.join(ctx.extensionPath, ...segments);
+  const vs_uri = vscode.Uri.file(ctx_path);
+  return panel.webview.asWebviewUri(vs_uri);
+}
+
 class NovelWebview implements INovelWebview {
   static ViewType = 'preview';
   static ViewTitle = 'Viewer';
 
   private _panel: vscode.WebviewPanel;
   private _ctx: vscode.ExtensionContext;
-  constructor(ctx: vscode.ExtensionContext) {
+  private _bridge: WebviewToTreeBride;
+  constructor(ctx: vscode.ExtensionContext, bridge: WebviewToTreeBride) {
     this._panel = vscode.window.createWebviewPanel(
       NovelWebview.ViewType,
       NovelWebview.ViewTitle,
@@ -52,7 +72,48 @@ class NovelWebview implements INovelWebview {
       }
     );
     this._ctx = ctx;
+    this._bridge = bridge;
     this._load_html();
+    this._panel.onDidDispose(this.on_dispose);
+    this._panel.webview.onDidReceiveMessage(this.on_webview_message, this);
+
+    bridge.set_webview(this);
+    bridge.fetch_init_data();
+  }
+
+  on_dispose() {
+    this._bridge.set_webview(null);
+  }
+
+  receive_chapter(chapter: Chapter, total: number) {
+    const webview = this._panel.webview;
+    const content = chapter.get_content();
+    const lines = content.split(EOL).filter((line) => line.trim() !== '');
+
+    webview.postMessage({
+      source: VSCODE_MESSAGE_SOURCE,
+      type: VsCodeResponseType.DATA,
+      payload: {
+        total,
+        lines,
+        index: chapter.index,
+        title: chapter.title
+      }
+    } as IVsCodeMessage);
+  }
+
+  on_webview_message(msg: IVsCodeMessage) {
+    const bridge = this._bridge;
+    switch (msg.type) {
+      case ReaderRequestType.INIT:
+        bridge.fetch_init_data();
+        break;
+      case ReaderRequestType.PAGE:
+        bridge.fetch_page_data(msg.payload);
+        break;
+      default:
+        vscode.window.showErrorMessage(`Unsupported message type ${msg.type}`);
+    }
   }
 
   private _load_html() {
@@ -85,31 +146,6 @@ class NovelWebview implements INovelWebview {
   }
 }
 
-/**
- * get the vscode URI from local file regarding the given webview panel
- * @param ctx vscode context
- * @param panel webview panel to use
- * @param segments resource path segments
- */
-function get_webview_uri(ctx: vscode.ExtensionContext, panel: vscode.WebviewPanel, segments: string[]): vscode.Uri {
-  const ctx_path = path.join(ctx.extensionPath, ...segments);
-  const vs_uri = vscode.Uri.file(ctx_path);
-  return panel.webview.asWebviewUri(vs_uri);
-}
-
-export default function (ctx: vscode.ExtensionContext) {
-  // const view_html = new WebviewHTML('root');
-  const webview = new NovelWebview(ctx);
-  console.log(ReaderRequestType.DATA);
-  // // add styles, sync with webpack output
-  // assets.styles.forEach((style) => {
-  //   const uri = get_webview_uri(ctx, panel, style);
-  //   view_html.add_style(uri);
-  // });
-  // // add scripts
-  // assets.scripts.forEach((script) => {
-  //   const uri = get_webview_uri(ctx, panel, script);
-  //   view_html.add_script(uri);
-  // });
-  // panel.webview.html = view_html.to_string();
+export default function (ctx: vscode.ExtensionContext, bridge: WebviewToTreeBride) {
+  const webview = new NovelWebview(ctx, bridge);
 }
