@@ -38,7 +38,7 @@ import {
   TO_TOP_SCROLL_THRESHOLD,
   VSCODE_MESSAGE_SOURCE
 } from './constants';
-import { VsCodeResponseType, ReaderRequestType } from '@shared/constants';
+import { VsCodeResponseType, ReaderRequestType } from './shared';
 
 import './app.scss';
 

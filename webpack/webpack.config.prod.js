@@ -8,7 +8,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const { merge } = require('webpack-merge');
 
 const { baseConfig, styleLoader } = require('./webpack.config');
-const { buildPath, publicPath } = require('./path');
+const { paths } = require('./config');
 
 styleLoader[0].use.unshift({
   loader: MiniCssExtractPlugin.loader
@@ -18,7 +18,7 @@ styleLoader[1].use.unshift(MiniCssExtractPlugin.loader);
 module.exports = merge(baseConfig, {
   mode: 'production',
   output: {
-    path: buildPath,
+    path: paths.build,
     filename: '[name].js'
   },
   plugins: [
@@ -27,7 +27,7 @@ module.exports = merge(baseConfig, {
     }),
     new CleanWebpackPlugin(),
     new ManifestPlugin({
-      publicPath
+      publicPath: paths.public
     }),
     new CopyPlugin({
       patterns: [{ from: 'template.ejs', to: '' }] // copy raw ejs into assets, will be manually parsed in extension

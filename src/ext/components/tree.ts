@@ -1,30 +1,19 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
+import { Chapter } from './Chapter';
+import { IChapterTree } from './types';
 
 const EXTRACT_CHAPTER_REGEXP = /^第([一二三四五零六七八九十百千万]+|\d+)[章回]|^番外/;
 
-export class Chapter extends vscode.TreeItem {
-  public range: vscode.Range; // position of title
-  public title: string;
+class NovelMetaInfo {
+  public name: string;
+  public cursor: number;
+  public total: number;
 
-  // onclick
-  command = {
-    command: 'chapterTreeView.jumpTo',
-    title: 'Jump To',
-    arguments: [this]
-  };
-  // iconPath = new vscode.ThemeIcon('archive');
-  private _editor: vscode.TextEditor;
-
-  constructor(range: vscode.Range, title: string, editor: vscode.TextEditor) {
-    super(title, vscode.TreeItemCollapsibleState.None);
-    this.range = range;
-    this.title = title;
-    this._editor = editor;
-  }
-
-  get_content() {
-    return this._editor.document.getText(this.range);
+  constructor(name: string, cursor: number, total: number) {
+    this.name = name;
+    this.cursor = cursor;
+    this.total = total;
   }
 }
 
@@ -41,12 +30,14 @@ function extract_chapters(editor: vscode.TextEditor): Chapter[] {
 
   let start = -1;
   let title = '';
+  let chapter_index = 0;
   return lines.reduce((acc, line, idx) => {
     if (EXTRACT_CHAPTER_REGEXP.test(line)) {
       if (title !== '') {
         const start_pos = new vscode.Position(start, 0);
         const end_pos = new vscode.Position(idx, 0);
-        acc.push(new Chapter(new vscode.Range(start_pos, end_pos), title, editor));
+        acc.push(new Chapter(new vscode.Range(start_pos, end_pos), title, chapter_index, editor));
+        chapter_index++;
       }
       start = idx + 1;
       title = line.trim();
@@ -55,15 +46,16 @@ function extract_chapters(editor: vscode.TextEditor): Chapter[] {
   }, [] as Chapter[]);
 }
 
-export class ChaterDataProvider implements vscode.TreeDataProvider<Chapter> {
+export class ChaterDataProvider implements IChapterTree<Chapter> {
   onDidChangeTreeData: vscode.Event<Chapter | null>;
 
-  private change_event: vscode.EventEmitter<Chapter | null> = new vscode.EventEmitter<Chapter | null>();
-  private view_cache: Map<vscode.Uri, Chapter[]>;
+  private _change_event: vscode.EventEmitter<Chapter | null> = new vscode.EventEmitter<Chapter | null>();
+  private _view_cache: Map<vscode.Uri, Chapter[]>;
+  private _meta_info: NovelMetaInfo | null = null;
 
   constructor(view_cache: Map<vscode.Uri, Chapter[]>) {
-    this.onDidChangeTreeData = this.change_event.event;
-    this.view_cache = view_cache;
+    this.onDidChangeTreeData = this._change_event.event;
+    this._view_cache = view_cache;
   }
 
   getChildren(elem: Chapter): Thenable<Chapter[]> {
@@ -72,7 +64,7 @@ export class ChaterDataProvider implements vscode.TreeDataProvider<Chapter> {
       return Promise.resolve([]);
     }
 
-    const cache = this.view_cache;
+    const cache = this._view_cache;
     const uri = editor.document.uri;
     if (cache.has(uri)) {
       return Promise.resolve(cache.get(uri)!);
@@ -89,7 +81,7 @@ export class ChaterDataProvider implements vscode.TreeDataProvider<Chapter> {
   }
 
   invalidate_cache() {
-    const cache = this.view_cache;
+    const cache = this._view_cache;
     const editor = vscode.window.activeTextEditor;
     if (editor) {
       const uri = editor.document.uri;
@@ -99,11 +91,15 @@ export class ChaterDataProvider implements vscode.TreeDataProvider<Chapter> {
 
   build_tree() {
     // construct the view tree if needed
-    this.change_event.fire(null);
+    this._change_event.fire(null);
   }
 
   jump_to(chapter: Chapter) {
     const editor = vscode.window.activeTextEditor;
     editor?.revealRange(chapter.range, vscode.TextEditorRevealType.AtTop);
+  }
+
+  private _fill_meta_info(editor: vscode.TextEditor, cursor: number, total: number) {
+    this._meta_info = new NovelMetaInfo('', cursor, total);
   }
 }

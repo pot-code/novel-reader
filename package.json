@@ -70,10 +70,10 @@
     "vscode:prepublish": "yarn run compile",
     "webview:dev": "NODE_ENV=development node webpack/server.js",
     "webview:build": "NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
-    "webview:lint": "tslint -p webview",
-    "compile": "tsc -p ./ && NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
-    "watch": "tsc -watch -p ./",
-    "lint": "tslint -t codeFrame -p tsconfig.json",
+    "webview:lint": "tslint -p src/webview",
+    "compile": "tsc -p src/ext && NODE_ENV=production webpack-cli --config webpack/webpack.config.prod.js",
+    "watch": "tsc --watch -p src/ext",
+    "lint": "tslint -t codeFrame -p src/ext/tsconfig.json",
     "pretest": "yarn run compile && yarn run lint",
     "test": "node ./out/test/runTest.js"
   },
@@ -109,7 +109,6 @@
     "copy-webpack-plugin": "^6.1.1",
     "css-loader": "^3.4.2",
     "cz-conventional-changelog": "^3.2.0",
-    "ejs": "^3.1.5",
     "express": "^4.16.4",
     "file-loader": "^6.0.0",
     "framer-motion": "^2.7.4",
@@ -168,5 +167,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "ejs": "^3.1.5"
   }
 }

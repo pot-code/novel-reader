@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
 
-import { ChaterDataProvider, Chapter } from './tree';
-import webview from './webview';
+import { ChaterDataProvider } from './components/tree';
+import { Chapter } from './components/Chapter';
+import webview from './components/webview';
 
 // this method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
-  console.log('"novel-reader" is now active!');
-
   const view_cache = new Map<vscode.Uri, Chapter[]>(); // store the calculated chapter list
   const chapter_tree = new ChaterDataProvider(view_cache);
 

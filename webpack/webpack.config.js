@@ -1,19 +1,19 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
-const { srcPath, rootPath } = require('./path');
+const { paths } = require('./config');
 
 exports.styleLoader = [
   // styles
   {
     test: /\.s(c|a)ss$/,
-    include: srcPath,
+    include: paths.src,
     use: [
       {
         loader: 'css-loader',
         options: {
           modules: {
-            context: srcPath,
+            context: paths.src,
             localIdentName: '[name]-[local]__[hash:base64:5]'
           },
           importLoaders: 2
@@ -25,7 +25,7 @@ exports.styleLoader = [
   },
   {
     test: /\.css$/,
-    include: srcPath,
+    include: paths.src,
     use: [
       {
         loader: 'css-loader',
@@ -39,12 +39,11 @@ exports.styleLoader = [
 ];
 
 exports.baseConfig = {
-  entry: path.resolve(srcPath, 'index.tsx'),
+  entry: path.resolve(paths.src, 'index.tsx'),
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
     alias: {
       // sync with tsconfig
-      '@shared': path.resolve(rootPath, 'shared')
     }
   },
   module: {
@@ -64,7 +63,7 @@ exports.baseConfig = {
           },
           {
             loader: 'ts-loader',
-            options: { transpileOnly: true, configFile: path.resolve(rootPath, 'webview', 'tsconfig.json') }
+            options: { transpileOnly: true, configFile: paths.tsconfig }
           }
         ]
       }

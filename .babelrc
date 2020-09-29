@@ -28,7 +28,8 @@
     [
       "react-css-modules",
       {
-        "context": "webview",
+        // sync with frontend src path
+        "context": "src/webview",
         "generateScopedName": "[name]-[local]__[hash:base64:5]",
         "handleMissingStyleName": "warn",
         "webpackHotModuleReloading": true,

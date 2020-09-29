@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { baseConfig, styleLoader } = require('./webpack.config');
 const { merge } = require('webpack-merge');
-const { buildPath, srcPath, rootPath } = require('./path');
+const { paths } = require('./config');
 
 styleLoader[0].use.unshift({
   loader: 'style-loader'
@@ -15,7 +15,7 @@ styleLoader[1].use.unshift('style-loader');
 
 // const smp = new SpeedMeasurePlugin()
 module.exports = merge(baseConfig, {
-  entry: ['webpack-hot-middleware/client?path=__hmr', path.resolve(srcPath, 'index.tsx')],
+  entry: ['webpack-hot-middleware/client?path=__hmr', path.resolve(paths.src, 'index.tsx')],
   mode: 'development',
   resolve: {
     alias: {
@@ -23,7 +23,7 @@ module.exports = merge(baseConfig, {
     }
   },
   output: {
-    path: buildPath,
+    path: paths.build,
     filename: '[name].js'
   },
   devtool: 'cheap-module-eval-source-map',
@@ -34,11 +34,11 @@ module.exports = merge(baseConfig, {
     }),
     new HtmlWebpackPlugin({
       inject: true,
-      template: path.resolve(rootPath, 'template.ejs')
+      template: paths.template
     })
   ],
   devServer: {
-    contentBase: buildPath,
+    contentBase: paths.public,
     quiet: true,
     open: false
   },

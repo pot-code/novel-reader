@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./webview/**/*.tsx'],
+  purge: ['./src/webview/**/*.tsx'],
   theme: {
     extend: {}
   },

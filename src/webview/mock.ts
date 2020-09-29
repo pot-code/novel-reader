@@ -1,5 +1,5 @@
 import { VSCODE_MESSAGE_SOURCE } from './constants';
-import { ReaderRequestType, VsCodeResponseType } from '@shared/constants';
+import { ReaderRequestType, VsCodeResponseType } from './shared';
 import { IVsCodeMessage } from './types';
 
 const data = [

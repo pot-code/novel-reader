@@ -1,0 +1,13 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"module": "CommonJS",
+		"target": "ES6",
+		"outDir": "../../out",
+		"baseUrl": "../",
+		"rootDir": "./"
+	},
+	"include": [
+		"./**/*"
+	]
+}
