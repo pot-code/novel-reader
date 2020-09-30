@@ -65,15 +65,17 @@ function theme_kind_to_string(kind: number): string {
 class NovelWebview implements INovelWebview {
   static ViewType = 'preview';
   static ViewTitle = 'Viewer';
+  static ViewColumn = vscode.ViewColumn.One;
 
   private _panel: vscode.WebviewPanel;
   private _ctx: vscode.ExtensionContext;
   private _bridge: WebviewToTreeBride;
+  private _dispose_callbacks: ((self: NovelWebview) => void)[] = [];
   constructor(ctx: vscode.ExtensionContext, bridge: WebviewToTreeBride) {
     this._panel = vscode.window.createWebviewPanel(
       NovelWebview.ViewType,
       NovelWebview.ViewTitle,
-      vscode.ViewColumn.One,
+      NovelWebview.ViewColumn,
       {
         enableScripts: true
       }
@@ -81,7 +83,7 @@ class NovelWebview implements INovelWebview {
     this._ctx = ctx;
     this._bridge = bridge;
     this._load_html();
-    this._panel.onDidDispose(this.on_dispose);
+    this._panel.onDidDispose(this._on_dispose, this);
     this._panel.webview.onDidReceiveMessage(this.on_webview_message, this);
 
     bridge.set_webview(this);
@@ -89,8 +91,8 @@ class NovelWebview implements INovelWebview {
     vscode.window.onDidChangeActiveColorTheme(this.on_color_theme_change, this);
   }
 
-  on_dispose() {
-    this._bridge.set_webview(null);
+  on_dispose(cb: (self: NovelWebview) => void) {
+    this._dispose_callbacks.push(cb);
   }
 
   receive_chapter(chapter: Chapter, total: number) {
@@ -136,6 +138,10 @@ class NovelWebview implements INovelWebview {
     }
   }
 
+  reveal() {
+    this._panel.reveal(NovelWebview.ViewColumn);
+  }
+
   private _get_render_data(): any {
     const ctx = this._ctx;
     const panel = this._panel;
@@ -175,8 +181,24 @@ class NovelWebview implements INovelWebview {
       }
     });
   }
+
+  private _on_dispose() {
+    this._bridge.set_webview(null);
+    for (const cb of this._dispose_callbacks) {
+      cb(this);
+    }
+  }
 }
 
+let singleton: NovelWebview | null;
+
 export default function (ctx: vscode.ExtensionContext, bridge: WebviewToTreeBride) {
-  const webview = new NovelWebview(ctx, bridge);
+  if (!singleton) {
+    singleton = new NovelWebview(ctx, bridge);
+    singleton.on_dispose(() => {
+      singleton = null;
+    });
+  } else {
+    singleton.reveal();
+  }
 }
