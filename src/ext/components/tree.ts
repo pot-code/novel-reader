@@ -35,6 +35,13 @@ function extract_chapters(editor: vscode.TextEditor): Chapter[] {
   }, [] as Chapter[]);
 }
 
+export function has_novel_content(editor: vscode.TextEditor): boolean {
+  const full_text = editor.document.getText();
+  const lines = full_text.split(os.EOL);
+
+  return lines.some((line) => EXTRACT_CHAPTER_REGEXP.test(line));
+}
+
 export class ChaterDataProvider implements IChapterTree<Chapter> {
   onDidChangeTreeData: vscode.Event<Chapter | null>;
 
@@ -71,7 +78,9 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
 
     // re-calculate
     const items = extract_chapters(editor);
-    cache.set(uri, items);
+    if (items.length > 0) {
+      cache.set(uri, items);
+    }
     this._total = items.length;
     this._items = items;
     this._selected = null;
@@ -102,7 +111,7 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
   get_current_state(): [Chapter | null, number] {
     if (this._selected !== null) {
       return [this._selected, this._total];
-    } else if (this._items !== null) {
+    } else if (this._items !== null && this._items.length > 0) {
       const fallback = this._items[0];
       return [fallback, this._total];
     }
@@ -110,7 +119,7 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
   }
 
   get_next_state(index: number): [Chapter | null, number] {
-    if (this._items !== null) {
+    if (this._items !== null && this._items.length > 0) {
       const chapter = this._items[index];
       this._selected = chapter;
       return [chapter, this._total];

@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:chapterTreeView"
+    "onLanguage:plaintext"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -23,7 +23,7 @@
       },
       {
         "command": "chapterTreeView.webview",
-        "title": "Show Webview",
+        "title": "Open Web Reader",
         "category": "Novel"
       }
     ],
@@ -46,7 +46,8 @@
       "novel-reader": [
         {
           "id": "chapterTreeView",
-          "name": "Chapters"
+          "name": "Chapters",
+          "when": "novel-reader:hasNovelContent"
         }
       ]
     },
@@ -62,6 +63,10 @@
         {
           "command": "chapterTreeView.refresh",
           "when": "false"
+        },
+        {
+          "command": "chapterTreeView.webview",
+          "when": "novel-reader:hasNovelContent"
         }
       ]
     }
