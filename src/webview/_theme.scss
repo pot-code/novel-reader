@@ -25,3 +25,14 @@ $theme-dark: (
   --theme-bg: #232323,
   --theme-text: #9ea18c
 );
+
+$theme-contrast: (
+  --theme-primary: #191919,
+  --theme-primary-shadow-light: #202020,
+  --theme-primary-shadow-dark: #131313,
+  --theme-primary-lighen: lighten(#191919, 13%),
+  --theme-primary-darken: lighten(#191919, 16%),
+  --theme-primary-active: lighten(#191919, 4%),
+  --theme-bg: #000000,
+  --theme-text: #ffffff
+);

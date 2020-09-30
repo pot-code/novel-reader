@@ -11,6 +11,9 @@
   :root[data-theme='dark'] {
     @include mx.themify($theme-dark);
   }
+  :root[data-theme='high-contrast'] {
+    @include mx.themify($theme-contrast);
+  }
 }
 
 // override vscode style
