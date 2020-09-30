@@ -37,7 +37,7 @@ body {
   left: 2rem;
   right: 2rem;
   top: 0;
-  margin: $nav-margin-top 0;
+  margin: $nav-margin-y 0;
 
   .title {
     font-size: 1.5rem;
@@ -57,7 +57,7 @@ body {
 .content-container {
   position: relative;
   top: 8rem;
-  margin-bottom: $nav-margin-top;
+  margin-bottom: $nav-margin-y;
 
   .content {
     margin: 0 4rem;

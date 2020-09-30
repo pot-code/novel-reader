@@ -204,6 +204,7 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
   const [bg_visible, set_bg_visible] = useState(false);
   const fade_trigger_distance = useRef(0);
   const nav_ref = useRef<HTMLDivElement>(null);
+  const container_ref = useRef<HTMLDivElement>(null);
   const toggle_visibility = throttle(
     () => {
       const scroll_top = document.documentElement.scrollTop;
@@ -226,11 +227,19 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
   const can_go_next = progress.value < progress.max;
   const can_go_prev = progress.value > 1;
 
-  useEffect(() => {
-    if (nav_ref.current) {
+  function get_fade_distance(): number {
+    if (nav_ref.current && container_ref.current) {
       const $nav = nav_ref.current;
-      fade_trigger_distance.current = $nav.offsetTop + $nav.offsetHeight;
+      const $container = container_ref.current;
+      const nav_style = window.getComputedStyle($nav);
+      const container_style = window.getComputedStyle($container);
+      return parseInt(container_style.paddingBottom, 10) + parseInt(nav_style.marginBottom, 10);
     }
+    return 0;
+  }
+
+  useEffect(() => {
+    fade_trigger_distance.current = get_fade_distance();
     window.addEventListener('scroll', toggle_visibility);
     return () => {
       window.removeEventListener('scroll', toggle_visibility);
@@ -268,7 +277,7 @@ function NavBar({ title, progress, change_theme, fontsize, change_fontsize, chan
       />
       <UIThemeContext.Consumer>
         {(theme) => (
-          <div className="grid grid-cols-3 items-center px-8 py-4 relative">
+          <div className="grid grid-cols-3 items-center px-8 py-4 relative" ref={container_ref}>
             <h1
               styleName="title"
               className="transition-colors duration-300"
