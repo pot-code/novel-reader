@@ -16,16 +16,20 @@ declare module '*.svg' {
   export default content;
 }
 
-declare var process: {
-  env: {
-    NODE_ENV: String;
-  };
-};
-
 declare interface IVsCodeApiObject {
   postMessage: (msg: any) => void;
   setState: (newState: any) => void;
   getState: () => any;
 }
 
+declare interface Window {
+  process: {
+    env: {
+      NODE_ENV: String;
+    };
+  };
+  __theme: string;
+}
+
+// under global but not window space
 declare function acquireVsCodeApi(): IVsCodeApiObject;

@@ -189,6 +189,7 @@ const data = [
 ];
 
 export default function serve() {
+  window.__theme = 'dark';
   window.acquireVsCodeApi = () => {
     const total = data.length;
 

@@ -54,6 +54,14 @@ function get_webview_uri(ctx: vscode.ExtensionContext, panel: vscode.WebviewPane
   return panel.webview.asWebviewUri(vs_uri);
 }
 
+function theme_kind_to_string(kind: number): string {
+  const MAPPING = ['', 'light', 'dark', 'high-contrast'];
+  if (kind >= 0 && kind < MAPPING.length) {
+    return MAPPING[kind];
+  }
+  return MAPPING[1];
+}
+
 class NovelWebview implements INovelWebview {
   static ViewType = 'preview';
   static ViewTitle = 'Viewer';
@@ -78,6 +86,7 @@ class NovelWebview implements INovelWebview {
 
     bridge.set_webview(this);
     bridge.fetch_init_data();
+    vscode.window.onDidChangeActiveColorTheme(this.on_color_theme_change, this);
   }
 
   on_dispose() {
@@ -101,6 +110,18 @@ class NovelWebview implements INovelWebview {
     } as IVsCodeMessage);
   }
 
+  on_color_theme_change() {
+    const webview = this._panel.webview;
+    const theme_kind = vscode.window.activeColorTheme.kind;
+    const theme = theme_kind_to_string(theme_kind);
+
+    webview.postMessage({
+      source: VSCODE_MESSAGE_SOURCE,
+      type: VsCodeResponseType.THEME,
+      payload: theme
+    } as IVsCodeMessage);
+  }
+
   on_webview_message(msg: IVsCodeMessage) {
     const bridge = this._bridge;
     switch (msg.type) {
@@ -115,7 +136,7 @@ class NovelWebview implements INovelWebview {
     }
   }
 
-  private _load_html() {
+  private _get_render_data(): any {
     const ctx = this._ctx;
     const panel = this._panel;
     const manifest_path = path.resolve(ctx.extensionPath, 'assets', 'webview', 'manifest.json');
@@ -134,8 +155,19 @@ class NovelWebview implements INovelWebview {
     assets.styles = assets.styles.map((style) => get_webview_uri(ctx, panel, style.split('/')).toString());
     assets.scripts = assets.scripts.map((script) => get_webview_uri(ctx, panel, script.split('/')).toString());
 
+    const theme_kind = vscode.window.activeColorTheme.kind;
+    const theme = theme_kind_to_string(theme_kind);
+
+    return { ...assets, theme };
+  }
+
+  private _load_html() {
+    const ctx = this._ctx;
+    const panel = this._panel;
     const template_path = path.resolve(ctx.extensionPath, 'assets', 'webview', 'template.ejs');
-    ejs.renderFile(template_path, assets, (err, content) => {
+    const data = this._get_render_data();
+
+    ejs.renderFile(template_path, data, (err, content) => {
       if (err !== null) {
         vscode.window.showErrorMessage(`Failed to render ejs: ${err.message}`);
       } else {

@@ -398,9 +398,9 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
     total: -1
   });
   const [fontsize, set_fontsize] = useState(24);
-  const [theme, set_theme] = useRootTheme({
+  const [combo, set_combo] = useRootTheme({
     accents: Accents.PURPLE,
-    theme: Themes.LIGHT
+    theme: window.__theme as Themes
   });
   const [redirect, set_redirect] = useState(false);
 
@@ -462,14 +462,14 @@ function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
   }
 
   return (
-    <UIThemeContext.Provider value={theme}>
+    <UIThemeContext.Provider value={combo}>
       <Content lines={data.lines} fontsize={fontsize} />
-      {data.lines.length > 0 && <ScrollToTop threshold={TO_TOP_SCROLL_THRESHOLD} fill={theme.accents} />}
+      {data.lines.length > 0 && <ScrollToTop threshold={TO_TOP_SCROLL_THRESHOLD} fill={combo.accents} />}
       <NavBar
         title={data.title}
         fontsize={fontsize}
         progress={{ max: data.total, value: data.index + 1 }}
-        change_theme={set_theme}
+        change_theme={set_combo}
         change_fontsize={change_fontsize}
         change_page={change_page}
       />

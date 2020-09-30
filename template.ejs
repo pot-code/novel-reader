@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <% if(typeof styles !== 'undefined') { %> <% styles.forEach(function(style){ %>
-    <link type="text/css" rel="stylesheet" href="<%=style%>" />
-    <% }) %> <% } %>
-  </head>
-  <body>
-    <div id="root"></div>
-    <% if(typeof scripts !== 'undefined'){ %> <% scripts.forEach(function(script){ %>
-    <script src="<%=script%>"></script>
-    <% }) %> <% } %>
-  </body>
+<% if(typeof theme !== 'undefined') { %>
+<html data-theme="<%=theme%>">
+  <% } else { %>
+  <html data-theme="light">
+    <% } %>
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <% if(typeof styles !== 'undefined') { %> <% styles.forEach(function(style){ %>
+      <link type="text/css" rel="stylesheet" href="<%=style%>" />
+      <% }) %> <% } %>
+    </head>
+    <body>
+      <script>
+        window.__theme = <%- JSON.stringify(typeof theme !== 'undefined'?theme:'light') %>
+      </script>
+      <div id="root"></div>
+      <% if(typeof scripts !== 'undefined'){ %> <% scripts.forEach(function(script){ %>
+      <script src="<%=script%>"></script>
+      <% }) %> <% } %>
+    </body>
+  </html>
 </html>

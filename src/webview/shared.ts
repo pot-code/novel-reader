@@ -5,7 +5,8 @@ export enum ReaderRequestType {
 }
 
 export enum VsCodeResponseType {
-  DATA = 'data'
+  DATA = 'data',
+  THEME = 'theme'
 }
 
 export interface IVsCodeMessage {

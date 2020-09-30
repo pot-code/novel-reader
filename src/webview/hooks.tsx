@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { THEME_LOCAL_ID } from './constants';
+import { IVsCodeMessage, VsCodeResponseType } from './shared';
 import { IThemeCombo } from './types';
 
 export function useOutsideCheck<T extends HTMLElement>(callback: (outside: boolean) => void) {
@@ -22,20 +22,31 @@ export function useOutsideCheck<T extends HTMLElement>(callback: (outside: boole
 }
 
 export function useRootTheme(initial: IThemeCombo): [IThemeCombo, React.Dispatch<React.SetStateAction<IThemeCombo>>] {
-  const [theme, set_theme] = useState(initial);
+  const [combo, set_combo] = useState(initial);
 
-  useEffect(() => {
-    const saved_theme = window.localStorage.getItem(THEME_LOCAL_ID);
-    if (saved_theme !== null) {
-      const parsed_theme = JSON.parse(saved_theme);
-      set_theme(parsed_theme);
+  function on_vscode_color_scheme_change(data: IVsCodeMessage) {
+    set_combo({
+      accents: combo.accents,
+      theme: data.payload
+    });
+  }
+
+  function on_message(msg: MessageEvent) {
+    const data = msg.data as IVsCodeMessage;
+    if (data.type === VsCodeResponseType.THEME) {
+      on_vscode_color_scheme_change(data);
     }
+  }
+  useEffect(() => {
+    window.addEventListener('message', on_message);
+    return () => {
+      window.removeEventListener('message', on_message);
+    };
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(THEME_LOCAL_ID, JSON.stringify(theme));
-    document.documentElement.dataset.theme = theme.theme;
-  }, [theme]);
+    document.documentElement.dataset.theme = combo.theme;
+  }, [combo]);
 
-  return [theme, set_theme];
+  return [combo, set_combo];
 }
