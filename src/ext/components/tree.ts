@@ -101,7 +101,7 @@ export class ChaterDataProvider implements IChapterTree<Chapter> {
 
     this._selected = chapter;
     editor?.revealRange(chapter.range, vscode.TextEditorRevealType.AtTop);
-    this.get_current_state();
+    this._bridge.push_chapter(chapter, this._total);
   }
 
   reset() {

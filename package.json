@@ -31,7 +31,7 @@
       "activitybar": [
         {
           "id": "novel-reader",
-          "title": "Novel Reader",
+          "title": "Chapters",
           "icon": "assets/sidebar.svg"
         }
       ]
