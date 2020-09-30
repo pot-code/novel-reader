@@ -62,6 +62,8 @@ function theme_kind_to_string(kind: number): string {
   return MAPPING[1];
 }
 
+type DisposeCallback = (self: NovelWebview) => void;
+
 class NovelWebview implements INovelWebview {
   static ViewType = 'preview';
   static ViewTitle = 'Viewer';
@@ -70,7 +72,7 @@ class NovelWebview implements INovelWebview {
   private _panel: vscode.WebviewPanel;
   private _ctx: vscode.ExtensionContext;
   private _bridge: WebviewToTreeBride;
-  private _dispose_callbacks: ((self: NovelWebview) => void)[] = [];
+  private _dispose_callbacks: DisposeCallback[] = [];
   constructor(ctx: vscode.ExtensionContext, bridge: WebviewToTreeBride) {
     this._panel = vscode.window.createWebviewPanel(
       NovelWebview.ViewType,
@@ -91,7 +93,7 @@ class NovelWebview implements INovelWebview {
     vscode.window.onDidChangeActiveColorTheme(this.on_color_theme_change, this);
   }
 
-  on_dispose(cb: (self: NovelWebview) => void) {
+  on_dispose(cb: DisposeCallback) {
     this._dispose_callbacks.push(cb);
   }
 
