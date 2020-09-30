@@ -12,9 +12,15 @@
       <% }) %> <% } %>
     </head>
     <body>
+      <% if(typeof theme !== 'undefined') { %>
       <script>
-        window.__theme = <%- JSON.stringify(typeof theme !== 'undefined'?theme:'light') %>
+        window.__theme = <%- JSON.stringify(theme) %>;
       </script>
+      <% } else { %>
+      <script>
+        window.__theme = 'light';
+      </script>
+      <% } %>
       <div id="root"></div>
       <% if(typeof scripts !== 'undefined'){ %> <% scripts.forEach(function(script){ %>
       <script src="<%=script%>"></script>
