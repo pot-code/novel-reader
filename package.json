@@ -1,7 +1,8 @@
 {
   "name": "novel-reader",
   "displayName": "Novel Reader",
-  "description": "TODO",
+  "description": "Provide decent reading experience",
+  "publisher": "pot-code",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.48.0"
@@ -24,7 +25,8 @@
       {
         "command": "chapterTreeView.webview",
         "title": "Open Web Reader",
-        "category": "Novel"
+        "category": "Novel",
+        "icon": "$(book)"
       }
     ],
     "viewsContainers": {
@@ -56,6 +58,13 @@
         {
           "command": "chapterTreeView.refresh",
           "when": "view == chapterTreeView",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "chapterTreeView.webview",
+          "when": "novel-reader:hasNovelContent && editorLangId == plaintext",
           "group": "navigation"
         }
       ],
