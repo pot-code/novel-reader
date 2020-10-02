@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader/root';
 import React, { useEffect, useState, useRef, useReducer } from 'react';
-import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -491,16 +491,14 @@ function App() {
 
   return (
     <div styleName="app">
-      <Router>
-        <Switch>
-          <Route path="/404">
-            <NotFound />
-          </Route>
-          <Route path="/">
-            <Reader vscode_api={vscode_api_ref.current} />
-          </Route>
-        </Switch>
-      </Router>
+      <Switch>
+        <Route path="/404">
+          <NotFound />
+        </Route>
+        <Route path="/">
+          <Reader vscode_api={vscode_api_ref.current} />
+        </Route>
+      </Switch>
     </div>
   );
 }
