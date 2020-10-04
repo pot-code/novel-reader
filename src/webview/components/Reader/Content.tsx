@@ -1,10 +1,13 @@
 import React from 'react';
 
-import { IContentProps } from '../../types';
-
 import './Content.scss';
 
-export default function Content({ lines, fontsize }: IContentProps) {
+type ContentProps = {
+  lines: string[];
+  fontsize: number;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export default function Content({ lines, fontsize }: ContentProps) {
   return (
     <div styleName="content-container">
       <div

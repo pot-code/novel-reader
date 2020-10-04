@@ -9,7 +9,7 @@ import { ReactComponent as PaletteIcon } from '@assets/palette.svg';
 import { ReactComponent as FontSizeIcon } from '@assets/font-size.svg';
 
 import { UIThemeContext, builtins } from '../../theme';
-import { INavBarProps, IThemeCombo } from '../../types';
+import { IThemeCombo } from '../../types';
 import { Themes } from '../../constants';
 import IconButton from '../IconButton/IconButton';
 import Popout from '../Popout/Popout';
@@ -19,14 +19,19 @@ import FontsizeIndicator from './FontsizeIndicator';
 
 import './NavBar.scss';
 
-export default function NavBar({
-  title,
-  progress,
-  change_theme,
-  fontsize,
-  change_fontsize,
-  change_page
-}: INavBarProps) {
+type NavBarProps = {
+  title: string;
+  fontsize: number;
+  change_theme: (theme: IThemeCombo) => void;
+  change_fontsize: (size: number) => void;
+  change_page: (page: number) => void;
+  progress: {
+    max: number;
+    value: number;
+  };
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export default function NavBar({ title, progress, change_theme, fontsize, change_fontsize, change_page }: NavBarProps) {
   const [bg_visible, set_bg_visible] = useState(false);
   const fade_trigger_distance = useRef(0);
   const nav_ref = useRef<HTMLDivElement>(null);

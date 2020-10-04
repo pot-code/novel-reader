@@ -1,10 +1,14 @@
 import React from 'react';
 
-import { IProgressBarProps } from '../../types';
-
 import './ProgressBar.scss';
 
-export default function ProgressBar({ max, value, fill }: IProgressBarProps) {
+type ProgressBarProps = {
+  max: number;
+  value: number;
+  fill: string;
+};
+
+export default function ProgressBar({ max, value, fill }: ProgressBarProps) {
   return (
     <div styleName="progress-bar" className="overflow-hidden">
       <div

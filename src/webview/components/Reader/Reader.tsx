@@ -9,13 +9,19 @@ import { Themes, Accents, MAX_FONTSIZE, MIN_FONTSIZE, TO_TOP_SCROLL_THRESHOLD } 
 import { VsCodeResponseType, ReaderRequestType, IVsCodeMessage, VSCODE_MESSAGE_SOURCE } from '../../shared';
 import { scroll_to_top } from '../../util';
 import Content from './Content';
-import { IReaderData } from '../../types';
 
 enum ReaderActions {
   DATA = 'data'
 }
 
-function reader_data_reducer(state: IReaderData, action: { type: string; payload: any }): IReaderData {
+type ReaderData = {
+  index: number;
+  total: number;
+  title: string;
+  lines: string[];
+};
+
+function reader_data_reducer(state: ReaderData, action: { type: string; payload: any }): ReaderData {
   switch (action.type) {
     case ReaderActions.DATA:
       return action.payload;

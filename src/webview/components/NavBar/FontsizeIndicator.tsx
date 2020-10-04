@@ -2,9 +2,10 @@ import React from 'react';
 
 import { ReactComponent as AddIcon } from '@assets/add-line.svg';
 import { ReactComponent as MinusIcon } from '@assets/subtract-line.svg';
-import { IFontSizeButtonProps } from '../../types';
 
 import './FontsizeIndicator.scss';
+
+type FontSizeButtonProps = React.HTMLAttributes<HTMLButtonElement>;
 
 export default function FontsizeIndicator({
   value,
@@ -17,7 +18,7 @@ export default function FontsizeIndicator({
   on_add?: () => void;
   on_minus?: () => void;
 }) {
-  const Btn = ({ children, onClick }: IFontSizeButtonProps) => (
+  const Btn = ({ children, onClick }: FontSizeButtonProps) => (
     <button className="p-1 rounded-full focus:outline-none" styleName="btn" onClick={onClick}>
       {children}
     </button>

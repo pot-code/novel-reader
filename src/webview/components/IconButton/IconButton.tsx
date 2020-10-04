@@ -1,9 +1,14 @@
 import React from 'react';
 import cx from 'classnames';
 
-import { IIconButtonProps } from '../../types';
-
 import './IconButton.scss';
+
+type IconButtonProps = {
+  Icon: ReactSVG;
+  fill: string;
+  active?: boolean;
+  disabled?: boolean;
+} & React.HTMLAttributes<HTMLButtonElement>;
 
 export default function IconButton({
   Icon,
@@ -12,7 +17,7 @@ export default function IconButton({
   disabled = false,
   onClick,
   ...rest
-}: IIconButtonProps) {
+}: IconButtonProps) {
   return (
     <button
       className="rounded-full p-2"

@@ -1,12 +1,24 @@
 import React from 'react';
 
-import { IColorPaletteProps, IPaletteItemProps } from '../../types';
+import { IThemeCombo } from '../../types';
 
-export default function ColorPalette({ size = 24, palettes, on_select }: IColorPaletteProps) {
+type PaletteItemProps = {
+  foreground: string;
+  background: string;
+  theme: IThemeCombo;
+};
+
+type ColorPaletteProps = {
+  size?: number;
+  palettes: PaletteItemProps[];
+  on_select?: (palette: IThemeCombo) => void;
+};
+
+export default function ColorPalette({ size = 24, palettes, on_select }: ColorPaletteProps) {
   const origin = size >> 1;
   const radius = size >> 1;
 
-  const PaletteItem = ({ foreground, background, theme }: IPaletteItemProps) => {
+  const PaletteItem = ({ foreground, background, theme }: PaletteItemProps) => {
     function on_palette_click() {
       if (on_select) {
         on_select(theme);

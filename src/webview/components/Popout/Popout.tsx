@@ -2,11 +2,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import useOutsideCheck from '@hooks/useOutsideCheck';
-import { IPopoutProps } from '../../types';
 
 import './Popout.scss';
 
-export default function Popout({ gap = 8, children, style = {}, content }: IPopoutProps) {
+type PopoutProps = {
+  gap?: number;
+  content: (() => React.ReactNode) | React.ReactNode;
+  children: (toggle: () => void, visible: boolean) => React.ReactNode;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export default function Popout({ gap = 8, children, style = {}, content }: PopoutProps) {
   const default_style: React.CSSProperties = {
     position: 'relative'
   };
