@@ -1,0 +1,17 @@
+@use '../../styles/mixin' as mx;
+@use '../../styles/theme' as *;
+
+.progress-bar {
+  position: relative;
+  border-radius: $progress-height / 2;
+  height: $progress-height;
+  @include mx.var-neumorphism-ridge(--theme-primary, 4px);
+
+  .bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: $progress-height;
+    @include mx.transition-size();
+  }
+}

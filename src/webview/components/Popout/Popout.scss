@@ -1,0 +1,24 @@
+@use '../../styles/theme' as *;
+
+.popout {
+  position: absolute;
+  left: 50%;
+  margin: auto;
+  padding: 0.5rem;
+  background-color: rgba(105, 105, 105, 0.4);
+  border-radius: 0.5rem;
+
+  // popout triangle
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    top: calc(var(--popout-triangle-height) * -1);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 var(--popout-triangle-height) var(--popout-triangle-height) var(--popout-triangle-height);
+    border-color: transparent transparent rgba(105, 105, 105, 0.4) transparent;
+  }
+}

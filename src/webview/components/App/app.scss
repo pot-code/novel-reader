@@ -1,0 +1,33 @@
+@use '../../styles/mixin' as mx;
+@use '../../styles/theme' as *;
+
+:global {
+  :root {
+    --popout-triangle-height: 0.5rem;
+  }
+  :root[data-theme='light'] {
+    @include mx.themify($theme-light);
+  }
+  :root[data-theme='dark'] {
+    @include mx.themify($theme-dark);
+  }
+  :root[data-theme='high-contrast'] {
+    @include mx.themify($theme-contrast);
+  }
+}
+
+// override vscode style
+html {
+  font-size: 16px;
+}
+
+// override vscode style
+body {
+  background-color: var(--theme-bg);
+  padding: 0;
+  @include mx.transition-color();
+}
+
+.app {
+  font-family: 'PingFang SC', 'tahoma', 'Microsoft Yahei', 'helvetica', 'sans-serif';
+}

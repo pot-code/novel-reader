@@ -1,0 +1,18 @@
+@use '../../styles/mixin' as mx;
+@use '../../styles/theme' as *;
+
+.icon-button {
+  @include mx.var-neumorphism-flat(--theme-primary, 8px);
+
+  &.icon-button--active,
+  &:active {
+    @include mx.var-neumorphism-inset(--theme-primary, 8px);
+  }
+  &.icon-button--disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  &:focus {
+    outline: none;
+  }
+}

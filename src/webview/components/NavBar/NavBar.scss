@@ -1,0 +1,24 @@
+@use '../../styles/theme' as *;
+@use '../../styles/mixin' as mx;
+
+.nav {
+  position: fixed;
+  left: 2rem;
+  right: 2rem;
+  top: 0;
+  margin: $nav-margin-y 0;
+
+  .title {
+    font-size: 1.5rem;
+  }
+  .nav-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 1.5rem;
+    background-color: var(--theme-primary);
+    @include mx.transition-color();
+  }
+}

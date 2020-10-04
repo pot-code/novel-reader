@@ -1,0 +1,9 @@
+.scroll-to-top {
+  bottom: 2rem;
+  right: 4rem;
+  padding: 0.5rem;
+
+  &:focus {
+    outline: none;
+  }
+}

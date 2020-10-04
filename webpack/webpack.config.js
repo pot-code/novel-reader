@@ -43,7 +43,9 @@ exports.baseConfig = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
     alias: {
-      // sync with tsconfig
+      '@styles': path.resolve(paths.src, 'styles'),
+      '@hooks': path.resolve(paths.src, 'hooks'),
+      '@assets': path.resolve(paths.src, 'assets')
     }
   },
   module: {

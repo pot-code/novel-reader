@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ReactComponent as AstronautSVG } from './assets/astronaut.svg';
+import { ReactComponent as AstronautSVG } from '@assets/astronaut.svg';
 
 export function NotFound() {
   return (

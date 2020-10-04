@@ -5,7 +5,15 @@
 		"target": "esnext",
 		"jsx": "preserve",
 		"rootDir": "./",
-		"baseUrl": "../",
+		"baseUrl": "./",
+		"paths": {
+			"@hooks/*": [
+				"hooks/*"
+			],
+			"@assets/*": [
+				"assets/*"
+			]
+		},
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"lib": [
