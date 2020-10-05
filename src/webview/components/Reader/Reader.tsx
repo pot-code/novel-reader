@@ -21,7 +21,7 @@ type ReaderData = {
   lines: string[];
 };
 
-function reader_data_reducer(state: ReaderData, action: { type: string; payload: any }): ReaderData {
+function reducer(state: ReaderData, action: { type: string; payload: any }): ReaderData {
   switch (action.type) {
     case ReaderActions.DATA:
       return action.payload;
@@ -31,7 +31,7 @@ function reader_data_reducer(state: ReaderData, action: { type: string; payload:
 }
 
 export default function Reader({ vscode_api }: { vscode_api: IVsCodeApiObject }) {
-  const [data, dispatch] = useReducer(reader_data_reducer, {
+  const [data, dispatch] = useReducer(reducer, {
     title: '',
     lines: [],
     index: -1,

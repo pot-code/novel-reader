@@ -32,7 +32,7 @@ module.exports = merge(base, {
     new HotModuleReplacementPlugin(),
     new WebpackBar({
       name: package.name,
-      color: '#75CA69'
+      color: '#32e0c4'
     }),
     new HtmlWebpackPlugin({
       inject: true,
