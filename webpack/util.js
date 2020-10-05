@@ -5,8 +5,6 @@ const path = require('path')
 const url = require('url')
 const os = require('os')
 
-const ASSETS_TABLE_HEADER = ['Asset', 'Size', 'Chunks', 'Chunk Names', 'Emitted'].map(text => chalk.gray.bold(text))
-
 function to_network_table(addresses) {
   const table_config = {
     border: getBorderCharacters('void')

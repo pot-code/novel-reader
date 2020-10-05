@@ -4,17 +4,18 @@ const { HotModuleReplacementPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
-const { baseConfig, styleLoader } = require('./webpack.config');
+const { base, style_loader } = require('./webpack.config');
+const package = require('../package.json');
 const { merge } = require('webpack-merge');
 const { paths } = require('./config');
 
-styleLoader[0].use.unshift({
+style_loader[0].use.unshift({
   loader: 'style-loader'
 });
-styleLoader[1].use.unshift('style-loader');
+style_loader[1].use.unshift('style-loader');
 
 // const smp = new SpeedMeasurePlugin()
-module.exports = merge(baseConfig, {
+module.exports = merge(base, {
   entry: ['webpack-hot-middleware/client?path=__hmr', path.resolve(paths.src, 'index.tsx')],
   mode: 'development',
   resolve: {
@@ -30,6 +31,7 @@ module.exports = merge(baseConfig, {
   plugins: [
     new HotModuleReplacementPlugin(),
     new WebpackBar({
+      name: package.name,
       color: '#75CA69'
     }),
     new HtmlWebpackPlugin({
@@ -44,7 +46,7 @@ module.exports = merge(baseConfig, {
   },
   module: {
     rules: [
-      ...styleLoader,
+      ...style_loader,
       {
         test: /\.(png|jpg|gif)$/,
         loader: 'url-loader'

@@ -7,15 +7,15 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { merge } = require('webpack-merge');
 
-const { baseConfig, styleLoader } = require('./webpack.config');
+const { base, style_loader } = require('./webpack.config');
 const { paths } = require('./config');
 
-styleLoader[0].use.unshift({
+style_loader[0].use.unshift({
   loader: MiniCssExtractPlugin.loader
 });
-styleLoader[1].use.unshift(MiniCssExtractPlugin.loader);
+style_loader[1].use.unshift(MiniCssExtractPlugin.loader);
 
-module.exports = merge(baseConfig, {
+module.exports = merge(base, {
   mode: 'production',
   output: {
     path: paths.build,
@@ -35,7 +35,7 @@ module.exports = merge(baseConfig, {
   ],
   module: {
     rules: [
-      ...styleLoader,
+      ...style_loader,
       {
         test: /\.(png|jpg|gif|webp)$/,
         loader: 'url-loader',

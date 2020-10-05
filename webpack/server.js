@@ -10,7 +10,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const config = require('./webpack.config.dev');
-const { print_banner, create_uri, to_network_table, get_network_address } = require('./utils');
+const { print_banner, create_uri, to_network_table, get_network_address } = require('./util');
 
 const DEFAULT_PORT = 8080;
 const publicPath = config.devServer.publicPath || '/';

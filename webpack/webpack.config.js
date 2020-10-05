@@ -3,7 +3,7 @@ const { DefinePlugin } = require('webpack');
 
 const { paths } = require('./config');
 
-exports.styleLoader = [
+exports.style_loader = [
   // styles
   {
     test: /\.s(c|a)ss$/,
@@ -38,7 +38,7 @@ exports.styleLoader = [
   }
 ];
 
-exports.baseConfig = {
+exports.base = {
   entry: path.resolve(paths.src, 'index.tsx'),
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
