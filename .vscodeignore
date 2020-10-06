@@ -13,3 +13,5 @@ webpack
 .babelrc
 postcss.config.js
 template.ejs
+coverage
+commitlint.config.js

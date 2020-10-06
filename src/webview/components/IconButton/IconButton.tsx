@@ -20,11 +20,13 @@ export default function IconButton({
 }: IconButtonProps) {
   return (
     <button
+      role="button"
       className="rounded-full p-2"
       styleName={cx('icon-button', {
         'icon-button--disabled': disabled,
         'icon-button--active': active
       })}
+      disabled={disabled}
       onClick={disabled ? undefined : onClick}
       {...rest}
     >

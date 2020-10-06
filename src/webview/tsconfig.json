@@ -7,6 +7,7 @@
 		"rootDir": "./",
 		"baseUrl": "./",
 		"paths": {
+			// WARN: sync with tsconfig
 			"@hooks/*": [
 				"hooks/*"
 			],
