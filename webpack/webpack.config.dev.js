@@ -1,8 +1,8 @@
 const WebpackBar = require('webpackbar');
 const path = require('path');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { HotModuleReplacementPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const { base, style_loader } = require('./webpack.config');
 const package = require('../package.json');
@@ -14,21 +14,16 @@ style_loader[0].use.unshift({
 });
 style_loader[1].use.unshift('style-loader');
 
-// const smp = new SpeedMeasurePlugin()
 module.exports = merge(base, {
   entry: ['webpack-hot-middleware/client?path=__hmr', path.resolve(paths.src, 'index.tsx')],
   mode: 'development',
-  resolve: {
-    alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  },
   output: {
     path: paths.build,
     filename: '[name].js'
   },
   devtool: 'cheap-module-eval-source-map',
   plugins: [
+    new ReactRefreshWebpackPlugin(),
     new HotModuleReplacementPlugin(),
     new WebpackBar({
       name: package.name,

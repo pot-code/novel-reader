@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root';
 import React, { useRef } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
@@ -24,4 +23,4 @@ function App() {
   );
 }
 
-export default hot(App);
+export default App;

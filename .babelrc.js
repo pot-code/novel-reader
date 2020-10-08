@@ -1,4 +1,5 @@
 const is_test_env = process.env.NODE_ENV === 'test';
+const is_dev_env = process.env.NODE_ENV === 'development';
 
 module.exports = {
   presets: [
@@ -14,7 +15,7 @@ module.exports = {
     ]
   ],
   plugins: [
-    'react-hot-loader/babel',
+    ...[is_dev_env && 'react-refresh/babel'].filter(Boolean),
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-proposal-class-properties',
     [
