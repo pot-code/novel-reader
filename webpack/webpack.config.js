@@ -1,7 +1,7 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
-const { paths } = require('./config');
+const { paths, css_module } = require('./config');
 
 exports.style_loader = [
   // styles
@@ -14,7 +14,7 @@ exports.style_loader = [
         options: {
           modules: {
             context: paths.src,
-            localIdentName: '[name]-[local]__[hash:base64:5]'
+            localIdentName: css_module.pattern
           },
           importLoaders: 2
         }

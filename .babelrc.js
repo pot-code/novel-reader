@@ -1,5 +1,6 @@
 const is_test_env = process.env.NODE_ENV === 'test';
 const is_dev_env = process.env.NODE_ENV === 'development';
+const { paths, css_module } = require('./webpack/config');
 
 module.exports = {
   presets: [
@@ -27,9 +28,8 @@ module.exports = {
     [
       'react-css-modules',
       {
-        // WARN: sync with frontend src path
-        context: 'src/webview',
-        generateScopedName: is_test_env ? '[local]' : '[name]-[local]__[hash:base64:5]',
+        context: paths.src,
+        generateScopedName: is_test_env ? '[local]' : css_module.pattern,
         handleMissingStyleName: 'warn',
         webpackHotModuleReloading: true,
         filetypes: {

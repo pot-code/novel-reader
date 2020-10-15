@@ -10,9 +10,7 @@ const { merge } = require('webpack-merge');
 const { base, style_loader } = require('./webpack.config');
 const { paths } = require('./config');
 
-style_loader[0].use.unshift({
-  loader: MiniCssExtractPlugin.loader
-});
+style_loader[0].use.unshift(MiniCssExtractPlugin.loader);
 style_loader[1].use.unshift(MiniCssExtractPlugin.loader);
 
 module.exports = merge(base, {
@@ -37,11 +35,11 @@ module.exports = merge(base, {
     rules: [
       ...style_loader,
       {
-        test: /\.(png|jpg|gif|webp)$/,
+        test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)$/,
         loader: 'url-loader',
         options: {
           limit: 8192,
-          name: 'img/[name].[ext]'
+          name: 'media/[name].[ext]'
         }
       },
       {
@@ -53,17 +51,17 @@ module.exports = merge(base, {
             loader: 'url-loader',
             options: {
               limit: 8192,
-              name: 'img/[name].[ext]',
+              name: 'assets/[name].[hash:8].[ext]',
               generator: (content) => svgToMiniDataURI(content.toString())
             }
           }
         ]
       },
       {
-        test: /\.(eot|ttf|woff|woff2)$/,
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)$/,
         loader: 'file-loader',
         options: {
-          name: 'fonts/[name].[ext]'
+          name: 'assets/[name].[ext]'
         }
       }
     ]

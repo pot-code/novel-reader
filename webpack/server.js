@@ -8,23 +8,25 @@ const boxen = require('boxen');
 const { stripIndent } = require('common-tags');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const app = express();
 const config = require('./webpack.config.dev');
-const { print_banner, create_uri, to_network_table, get_network_address } = require('./util');
+const { print_banner, create_uri, to_network_table, get_network_address, get_typeof_string } = require('./util');
+
+const app = express();
+const compiler = webpack(config);
 
 const DEFAULT_PORT = 8080;
-const publicPath = config.devServer.publicPath || '/';
-const compiler = webpack(config);
-const proxy = config.devServer.proxy;
+const webpack_server_config = config.devServer;
 
-portfinder.basePort = config.devServer.port || DEFAULT_PORT;
+portfinder.basePort = webpack_server_config.port || DEFAULT_PORT;
 
-if (proxy) {
-  let proxyType = typeofString(proxy);
+if (webpack_server_config.proxy) {
+  const proxy = webpack_server_config.proxy;
+  const proxyType = get_typeof_string(proxy);
+
   if (proxyType === '[object Object]') {
     Object.keys(proxy).forEach((path) => {
       const value = proxy[path];
-      if (typeofString(value) === '[object Object]') {
+      if (get_typeof_string(value) === '[object Object]') {
         app.use(path, createProxyMiddleware(value));
       } else {
         app.use(path, createProxyMiddleware({ target: value }));
@@ -33,7 +35,7 @@ if (proxy) {
   } else if (proxyType === '[object Array]') {
     proxy.forEach((item) => {
       const { context, ...rest } = item;
-      const contextType = typeofString(context);
+      const contextType = get_typeof_string(context);
       if (contextType === '[object Array]') {
         context.forEach((path) => {
           app.use(path, createProxyMiddleware({ ...rest }));
@@ -47,9 +49,11 @@ if (proxy) {
   }
 }
 
+const public_path = webpack_server_config.publicPath || '/';
+
 app.use(
   devMiddleware(compiler, {
-    publicPath,
+    publicPath: public_path || '/',
     logLevel: 'error',
     methods: ['GET', 'HEAD', 'POST', 'PUT'],
     watchOptions: {
@@ -64,18 +68,14 @@ app.use(
   })
 );
 
-function typeofString(val) {
-  return Object.prototype.toString.call(val);
-}
-
 async function start_server() {
-  await print_banner();
+  print_banner();
 
   const port = await portfinder.getPortPromise();
   const addresses = get_network_address();
   const urls = addresses.map((address) => ({
     ...address,
-    address: chalk.cyan(create_uri('http', address.address, port, publicPath))
+    address: chalk.cyan(create_uri('http', address.address, port, public_path))
   }));
 
   app.listen(port, () => {

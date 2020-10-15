@@ -1,10 +1,3 @@
-// const purgecss = require('@fullhuman/postcss-purgecss')({
-//   content: ['./webview/**/*.tsx'],
-//   whitelist: ['html', 'body', ':global', /^:root.*/],
-//   // rejected: true,
-//   defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || []
-// });
-
 module.exports = {
   ident: 'postcss',
   plugins: [

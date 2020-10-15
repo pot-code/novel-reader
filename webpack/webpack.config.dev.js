@@ -9,18 +9,11 @@ const package = require('../package.json');
 const { merge } = require('webpack-merge');
 const { paths } = require('./config');
 
-style_loader[0].use.unshift({
-  loader: 'style-loader'
-});
+style_loader[0].use.unshift('style-loader');
 style_loader[1].use.unshift('style-loader');
 
 module.exports = merge(base, {
-  entry: ['webpack-hot-middleware/client?path=__hmr', path.resolve(paths.src, 'index.tsx')],
   mode: 'development',
-  output: {
-    path: paths.build,
-    filename: '[name].js'
-  },
   devtool: 'cheap-module-eval-source-map',
   plugins: [
     new ReactRefreshWebpackPlugin(),
@@ -43,7 +36,7 @@ module.exports = merge(base, {
     rules: [
       ...style_loader,
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)$/,
         loader: 'url-loader'
       },
       {
@@ -51,7 +44,7 @@ module.exports = merge(base, {
         use: ['@svgr/webpack', 'url-loader']
       },
       {
-        test: /\.(eot|ttf|woff|woff2)$/,
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)$/,
         loader: 'file-loader'
       }
     ]

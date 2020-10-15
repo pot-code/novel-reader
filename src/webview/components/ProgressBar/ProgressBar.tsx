@@ -2,7 +2,7 @@ import React from 'react';
 
 import './ProgressBar.scss';
 
-type ProgressBarProps = {
+export type ProgressBarProps = {
   max: number;
   value: number;
   fill: string;

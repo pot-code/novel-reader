@@ -8,3 +8,7 @@ module.exports.paths = {
   template: path.resolve(__dirname, '../template.ejs'),
   tsconfig: path.resolve(__dirname, '../src/webview/tsconfig.json')
 };
+
+module.exports.css_module = {
+  pattern: '[name]-[local]__[hash:base64:5]'
+};
